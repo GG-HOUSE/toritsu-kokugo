@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国語 オリジナル問題（V模擬対策・練習用）</title>
+<style>
+  :root {
+    --main: #1f4e7a;
+    --main-dark: #123252;
+    --bg: #f4f0ee;
+    --card: #ffffff;
+    --correct: #1a7a3c;
+    --wrong: #b3261e;
+    --lead-bg: #f5f8fa;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 0;
+    color: #222;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, var(--main-dark), var(--main));
+    color: white;
+    padding: 22px 16px 26px;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 4px; font-size: 1.4rem; }
+  header p { margin: 0; font-size: 0.85rem; opacity: 0.9; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 16px; }
+  .timer-bar {
+    background: white; border-radius: 10px; padding: 10px 14px; margin: -16px auto 16px;
+    max-width: 780px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .timer-bar span { font-size: 0.85rem; color: #555; }
+  #timerDisplay { font-weight: bold; color: var(--main-dark); font-size: 1.1rem; }
+  .timer-bar button {
+    background: var(--main); color: white; border: none; border-radius: 6px;
+    padding: 6px 12px; font-size: 0.8rem; cursor: pointer;
+  }
+  .name-bar {
+    background: white; border-radius: 10px; padding: 10px 14px; margin: 0 auto 16px;
+    max-width: 780px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: #555;
+  }
+  .name-bar input { border: 1px solid #ccc; border-radius: 6px; padding: 5px 8px; font-size: 0.85rem; }
+  .section-card {
+    background: var(--card); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section-title {
+    background: var(--main); color: white; padding: 10px 14px; border-radius: 8px;
+    font-weight: bold; font-size: 1.0rem; margin-bottom: 12px;
+  }
+  .section-lead {
+    background: var(--lead-bg); border: 1px solid #d9e2ea; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;
+    font-size: 0.92rem; color: #333; white-space: pre-wrap;
+  }
+  .item { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed #ddd; }
+  .item:last-child { border-bottom: none; margin-bottom: 0; }
+  .qtext { font-weight: bold; margin-bottom: 8px; font-size: 0.97rem; }
+  .qtag { display:inline-block; font-size:0.72rem; background:#e8eef5; color:var(--main-dark); border-radius:4px; padding:1px 6px; margin-right:6px; font-weight:normal; }
+  .choice-label {
+    display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border-radius: 8px;
+    margin-bottom: 6px; cursor: pointer; border: 1px solid #e2e5ec; transition: background 0.15s;
+  }
+  .choice-label:hover { background: #f9f5f6; }
+  .choice-label input { margin-top: 3px; flex-shrink: 0; }
+  .choice-mark { font-weight: bold; color: var(--main-dark); margin-right: 2px; }
+  input[type=text].fill-input {
+    border: 1px solid #bbb; border-radius: 6px; padding: 6px 10px; font-size: 0.95rem;
+    font-family: inherit; width: 160px; margin-left: 6px;
+  }
+  textarea {
+    width: 100%; min-height: 70px; border-radius: 8px; border: 1px solid #ccc; padding: 8px;
+    font-family: inherit; font-size: 0.92rem; resize: vertical;
+  }
+  .char-count { font-size: 0.8rem; color: #888; text-align: right; margin-top: 2px; }
+  .char-count.over { color: var(--wrong); font-weight: bold; }
+  .reveal-btn, .self-btn {
+    margin-top: 6px; background: #e8eef5; color: var(--main-dark); border: 1px solid var(--main);
+    border-radius: 6px; padding: 5px 10px; font-size: 0.8rem; cursor: pointer; margin-right: 6px;
+  }
+  .self-btn.active-ok { background: var(--correct); color: white; border-color: var(--correct); }
+  .self-btn.active-ng { background: var(--wrong); color: white; border-color: var(--wrong); }
+  .sample-box {
+    display: none; margin-top: 8px; background: #eafaf0; border-left: 4px solid var(--correct);
+    padding: 8px 10px; font-size: 0.88rem; border-radius: 4px;
+  }
+  .result-box { display: none; margin-top: 8px; padding: 8px 10px; border-radius: 6px; font-size: 0.88rem; }
+  .result-correct { background: #eafaf0; border-left: 4px solid var(--correct); color: #185c30; }
+  .result-wrong { background: #fdecea; border-left: 4px solid var(--wrong); color: #8c2a22; }
+  .grade-bar {
+    position: sticky; bottom: 0; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    padding: 12px 16px; text-align: center; z-index: 10; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  }
+  .grade-btn {
+    background: var(--main); color: white; border: none; border-radius: 24px;
+    padding: 12px 28px; font-size: 1rem; font-weight: bold; cursor: pointer;
+  }
+  .save-btn {
+    background: #1a7a3c; color: white; border: none; border-radius: 24px;
+    padding: 12px 28px; font-size: 1rem; font-weight: bold; cursor: pointer; display:none;
+  }
+  .grade-btn:active, .save-btn:active { transform: scale(0.97); }
+  #scoreSummary {
+    max-width: 780px; margin: 0 auto 16px; background: white; border-radius: 12px; padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: none;
+  }
+  #scoreSummary .headline { text-align:center; }
+  #scoreSummary .big { font-size: 2rem; font-weight: bold; color: var(--main-dark); }
+  #fieldTable { width:100%; border-collapse: collapse; margin-top: 14px; font-size: 0.85rem; }
+  #fieldTable th, #fieldTable td { border-bottom: 1px solid #eee; padding: 6px 4px; text-align: left; }
+  #fieldTable th { color: #888; font-weight: normal; }
+  .weak-tag { display:inline-block; background:#fdecea; color:var(--wrong); border-radius:4px; padding:2px 7px; margin:2px 4px 2px 0; font-size:0.78rem; }
+  .footer-note { text-align: center; font-size: 0.75rem; color: #999; padding: 20px 16px 40px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>国語　オリジナル問題（V模擬対策）</h1>
+  <p>V模擬 出題範囲分析に基づくオリジナル予想問題（練習用）</p>
+</header>
+
+<div class="timer-bar">
+  <span>目安時間 50分　経過：<span id="timerDisplay">00:00</span></span>
+  <div>
+    <button onclick="startTimer()">開始</button>
+    <button onclick="resetTimer()">リセット</button>
+  </div>
+</div>
+
+<div class="name-bar">
+  名前：<input type="text" id="studentName" placeholder="（任意）記録用の名前">
+</div>
+
+<div class="wrap" id="quizRoot"></div>
+
+<div id="scoreSummary">
+  <div class="headline">
+    <div>選択式・漢字の正答数</div>
+    <div class="big"><span id="scoreNum">0</span> / <span id="scoreTotal">0</span></div>
+    <div style="font-size:0.85rem;color:#666;margin-top:6px;">作文（200字）は解答例と見比べて、「できた／もう一息」ボタンで自己評価してください。</div>
+  </div>
+  <table id="fieldTable"><thead><tr><th>分野</th><th>正答</th><th>問題数</th><th>正答率</th></tr></thead><tbody></tbody></table>
+  <div id="weakList" style="margin-top:10px;"></div>
+</div>
+
+<div class="grade-bar">
+  <button class="grade-btn" onclick="gradeAll()">採点する</button>
+  <button class="save-btn" id="saveBtn" onclick="saveResults()">結果を保存する</button>
+</div>
+
+<div class="footer-note">この問題は過去問そのものではなく、出題傾向分析に基づき新規作成したオリジナル問題です。保存した結果ファイルをClaudeに見せると、苦手分野に合わせた次の問題を作れます。</div>
+
+<script>
+const SECTIONS = [{"id": "q1", "title": "大問一　次の(1)~(5)の下線を付けた漢字の読みがなを書き、(6)~(10)の下線を付けたカタカナの部分に当たる漢字を書け。", "lead": null, "items": [{"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_読み", "no": 1, "q": "彼の発言には{矛盾}が感じられた。", "answer": "むじゅん", "explain": "「矛盾」はつじつまが合わないこと。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_読み", "no": 2, "q": "突然のニュースに{動揺}を隠せなかった。", "answer": "どうよう", "explain": "「動揺」は心が落ち着かなくなること。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_読み", "no": 3, "q": "彼女は{几帳面}な性格で知られている。", "answer": "きちょうめん", "explain": "「几帳面」は物事をきちんと行う性格。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_読み", "no": 4, "q": "会議で新しい方針が{提示}された。", "answer": "ていじ", "explain": "「提示」は考えなどを示すこと。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_読み", "no": 5, "q": "彼は{寡黙}だが、誰よりも周りをよく見ている。", "answer": "かもく", "explain": "「寡黙」は口数が少ないこと。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_書き", "no": 6, "q": "事故の{ゲンイン}を調査する。", "answer": "原因", "explain": "「原因」は物事が起こるもと。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_書き", "no": 7, "q": "新製品の{センデン}を行う。", "answer": "宣伝", "explain": "「宣伝」は広く知らせること。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_書き", "no": 8, "q": "彼はチームの{シキ}を高く保っていた。", "answer": "士気", "explain": "「士気」は物事に取り組む意気込み。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_書き", "no": 9, "q": "問題の{コンカン}にある原因を探る。", "answer": "根幹", "explain": "「根幹」は物事の基礎となる重要な部分。"}, {"kind": "fill", "field": "漢字の読み書き", "topic": "漢字_書き", "no": 10, "q": "彼女は困難を{コクフク}した。", "answer": "克服", "explain": "「克服」は困難に打ち勝つこと。"}]}, {"id": "q2", "title": "大問二　次の文章を読んで、あとの各問に答えよ。", "lead": "中学三年生の陽菜は、クラス合唱コンクールの指揮者に選ばれていた。本番まであと一週間。だが、練習中に私語をやめないクラスメートたちを前に、陽菜はどう声をかければいいのか分からずにいた。\n　「みんな、もう少し声出して・・・」\n　そう言いかけた陽菜の声は、教室のざわめきにかき消された。指揮棒を持つ手が、汗ばんでいく。\n　放課後、誰もいなくなった教室で一人ピアノの前に座っていると、同じパートの拓也が戻ってきた。\n　「陽菜、さっき無理に注意しなくてよかったんじゃない？」\n　「でも、このままじゃ本番までに間に合わない」\n　「合わせようとするより、まず陽菜が一番大きい声で歌えばいいと思う。指揮者が本気だってわかれば、みんなもついてくるよ」\n　拓也の言葉に、陽菜は自分がずっと「注意すること」ばかり考えていたのだと気づいた。指揮者としてどう振る舞うべきかより先に、自分自身が誰よりも歌を大切に思っていることを、態度で示せていなかったのだ。\n　翌日の練習、陽菜は指示を出す代わりに、誰よりも大きな声で歌いだした。最初は戸惑っていたクラスメートたちも、一人、また一人と声を合わせ始めた。\n　教室いっぱいに広がっていく歌声を聞きながら、陽菜は指揮棒を強く握りしめた。", "items": [{"kind": "choice", "field": "文学的文章", "topic": "文学_心情把握", "no": 1, "q": "傍線部「そう言いかけた陽菜の声は、教室のざわめきにかき消された」とあるが、この時の陽菜の心情として最も適切なのは、次のうちではどれか。", "choices": ["クラスメートに対する怒りで、いっそ指揮者をやめたいと思っている。", "自分の声が届かないもどかしさと、指揮者としての不安を感じている。", "本番が近いことへの緊張から、練習そのものに無関心になっている。", "クラスメートの態度を面白く感じ、余裕を持って見守っている。"], "answer": 1, "explain": "声がかき消され、指揮棒を持つ手が汗ばむという描写から、伝わらないもどかしさと不安が読み取れる。"}, {"kind": "choice", "field": "文学的文章", "topic": "文学_人物描写理解", "no": 2, "q": "傍線部「合わせようとするより、まず陽菜が一番大きい声で歌えばいいと思う」という拓也の発言の役割として最も適切なのは、次のうちではどれか。", "choices": ["陽菜の指揮者としての力不足を指摘し、交代を勧めている。", "陽菜に発想の転換を促し、行動で示すことの大切さに気づかせている。", "自分が指揮者を代わりたいという意図を遠回しに伝えている。", "クラス全体への不満を陽菜に代弁させようとしている。"], "answer": 1, "explain": "拓也の言葉によって、陽菜は「注意すること」ではなく「自ら態度で示すこと」の大切さに気づいている。"}, {"kind": "choice", "field": "文学的文章", "topic": "文学_心情変化", "no": 3, "q": "傍線部「陽菜は自分がずっと『注意すること』ばかり考えていたのだと気づいた」とあるが、この気づきの内容として最も適切なのは、次のうちではどれか。", "choices": ["クラスメートを注意する権利は指揮者にはないということ。", "指揮者としての権威を示すには、厳しさが必要だということ。", "他者に働きかける前に、自分自身の姿勢を示すことが大切だということ。", "合唱コンクールそのものに意味を見いだせないということ。"], "answer": 2, "explain": "直後の「自分自身が誰よりも歌を大切に思っていることを、態度で示せていなかった」という記述と対応する。"}, {"kind": "choice", "field": "文学的文章", "topic": "文学_情景描写の効果", "no": 4, "q": "結末の「教室いっぱいに広がっていく歌声を聞きながら、陽菜は指揮棒を強く握りしめた」という表現の効果として最も適切なのは、次のうちではどれか。", "choices": ["クラスの変化に対する陽菜の手応えと決意を感じさせている。", "陽菜が疲労のあまり、指揮を続けられなくなる様子を暗示している。", "クラスメートへの不信感がまだ残っていることを示している。", "本番の失敗を予感させ、物語に不穏な余韻を残している。"], "answer": 0, "explain": "広がる歌声と指揮棒を握りしめる動作が、クラスの変化への手応えと指揮者としての決意を表している。"}, {"kind": "choice", "field": "文学的文章", "topic": "文学_表現技法", "no": 5, "q": "この文章の表現の特徴について述べたものとして最も適切なのは、次のうちではどれか。", "choices": ["陽菜と拓也、二人の視点を交互に描くことで、互いの誤解を解いていく展開になっている。", "陽菜の内面に寄り添いながら、拓也との短い会話を転換点として心情の変化を描いている。", "会話文を一切用いず、地の文のみで人物の心情を説明している。", "過去の回想を中心に構成し、現在の場面はごく短く描かれている。"], "answer": 1, "explain": "語りは陽菜の内面中心で、拓也との会話が心情変化のきっかけとして機能している。"}]}, {"id": "q3", "title": "大問三　次の文章を読んで、あとの各問に答えよ。", "lead": "現代社会では、「わかりやすさ」が高く評価される。テレビでもインターネットでも、複雑な問題を一言でまとめた説明が好まれ、難解な言い回しは敬遠されがちである。\n　しかし、わかりやすさを追求することには、見過ごされがちな代償がある。物事を単純化して伝えるとき、私たちはしばしば例外やグレーゾーンを切り捨てている。複雑な現実を「良い・悪い」「正しい・間違い」という二つの箱に分けてしまうと、実際にはその中間にある無数の事情が見えなくなる。\n　わかりやすい説明は、理解の入り口としては有効である。だが、それを最終的な結論として受け取ってしまうと、私たちは物事を深く考える機会を失う。複雑な問題を複雑なまま受け止め、簡単に結論を出さずに保留し続ける態度もまた、知性の一部である。\n　もちろん、あらゆる場面で複雑さにこだわるべきだというわけではない。急いで判断しなければならない場面では、単純化された情報が助けになることもある。重要なのは、わかりやすさを「使う道具」として扱い、それに「支配」されないことだ。\n　私たちは、わかりやすい答えを求める前に、一度立ち止まり、その問題がそもそも単純化できるものなのかを問い直す必要がある。", "items": [{"kind": "choice", "field": "説明的文章", "topic": "説明文_内容理解", "no": 1, "q": "傍線部「わかりやすさを追求することには、見過ごされがちな代償がある」とあるが、筆者が述べる「代償」の内容として最も適切なのは、次のうちではどれか。", "choices": ["情報の伝達速度が遅くなること。", "例外やグレーゾーンが切り捨てられ、中間にある事情が見えなくなること。", "難解な言い回しを使う人が減っていくこと。", "テレビやインターネットの利用者が減少すること。"], "answer": 1, "explain": "第2段落で、単純化によって例外や中間の事情が見えなくなることが「代償」として説明されている。"}, {"kind": "choice", "field": "説明的文章", "topic": "説明文_具体例の解釈", "no": 2, "q": "傍線部「二つの箱に分けてしまう」とはどういうことか。最も適切なのは、次のうちではどれか。", "choices": ["物事を対立する二つの立場に分けて、両方の意見を平等に扱うこと。", "複雑な現実を「良い・悪い」のような単純な二分法で判断してしまうこと。", "情報を二種類のメディアに分けて発信すること。", "問題を二人の専門家に相談して解決すること。"], "answer": 1, "explain": "直前の「良い・悪い」「正しい・間違い」という二分法を指しており、単純化した判断のたとえである。"}, {"kind": "choice", "field": "説明的文章", "topic": "説明文_筆者の主張理解", "no": 3, "q": "筆者が最も伝えたいこととして適切なのは、次のうちではどれか。", "choices": ["わかりやすさは常に避けるべきであり、複雑な説明のみを信頼すべきだ。", "わかりやすさを道具として使いこなし、それに支配されない姿勢が重要だ。", "急いで判断する場面では、単純化された情報を無視すべきだ。", "物事は必ず単純化できるので、複雑に考える必要はない。"], "answer": 1, "explain": "第4段落の「わかりやすさを『使う道具』として扱い、それに『支配』されないこと」が筆者の主張の核心。"}, {"kind": "choice", "field": "説明的文章", "topic": "説明文_論理構成", "no": 4, "q": "この文章の論の進め方について述べたものとして最も適切なのは、次のうちではどれか。", "choices": ["わかりやすさへの評価を示した上で、その代償を指摘し、単純化への向き合い方を提案している。", "反対意見を複数取り上げ、一つずつ反証することで主張を補強している。", "具体例を一切用いず、抽象的な定義のみで議論を進めている。", "時代を追ってわかりやすさの歴史的変化を説明している。"], "answer": 0, "explain": "評価の提示・代償の指摘・留保の必要性を経て、向き合い方を提案する構成をとっている。"}, {"kind": "choice", "field": "説明的文章", "topic": "説明文_段落関係", "no": 5, "q": "第4段落が本文全体の中で果たしている役割として最も適切なのは、次のうちではどれか。", "choices": ["それまでの主張を全面的に否定し、話題を転換している。", "わかりやすさを一律に否定するのではなく、条件付きで評価し、主張に幅を持たせている。", "第1段落の内容を繰り返すことで、印象を強めている。", "本文とは関係のない新しい話題を導入している。"], "answer": 1, "explain": "第4段落は「単純化が助けになる場合もある」と留保を加えることで、主張に幅とバランスを持たせている。"}]}, {"id": "q4", "title": "大問四　次の文章とその現代語訳を読んで、あとの各問に答えよ。", "lead": "〔本文〕\n　仁和寺にある法師、年寄るまで石清水を拝まざりければ、心憂く覚えて、あるとき思ひ立ちて、ただ一人、徒歩よりまうでけり。極楽寺・高良などを拝みて、かばかりと心得て帰りにけり。\n　さて、かたへの人にあひて、「年ごろ思ひつること、果たしはべりぬ。聞きしにも過ぎて、尊くこそおはしけれ。そも、参りたる人ごとに山へ登りしは、何事かありけん、ゆかしかりしかど、神へ参るこそ本意なれと思ひて、山までは見ず」とぞ言ひける。\n　少しのことにも、先達はあらまほしき事なり。\n（「徒然草」第五十二段による）\n\n〔現代語訳〕\n　仁和寺にいたある法師が、年をとるまで石清水八幡宮に参拝したことがなかったので、残念に思い、あるとき思い立って、たった一人で徒歩で参詣した。極楽寺・高良神社などを拝んで、これだけだと思い込んで帰ってしまった。\n　そうして、仲間に会って、「長年思っていたことを、やっと果たしました。聞いていた以上に、尊くいらっしゃいました。それにしても、参拝していた人たちが皆山へ登っていったのは、何事があったのだろうか、知りたかったけれど、神へ参拝することこそが本来の目的だと思って、山までは見ませんでした」と言った。\n　ちょっとしたことにも、案内人はあってほしいものである。", "items": [{"kind": "choice", "field": "古典", "topic": "古典_現代仮名遣い", "no": 1, "q": "本文中の「思ひ立ちて」を現代仮名遣いに直したものとして正しいのは、次のうちではどれか。", "choices": ["おもいたちて", "おもひたちて", "おもいだちて", "おもひだちて"], "answer": 0, "explain": "歴史的仮名遣いの語中・語尾の「ひ」は現代仮名遣いでは「い」となるため、「思ひ立ちて」は「おもいたちて」となる。"}, {"kind": "choice", "field": "古典", "topic": "古典_内容理解", "no": 2, "q": "この法師が山へ登らなかった理由として最も適切なのは、次のうちではどれか。", "choices": ["山を登る体力がなかったから。", "極楽寺・高良を拝んだことで石清水八幡宮の参拝を終えたと思い込んだから。", "山の上に何があるか知っていて、興味がなかったから。", "同行者に止められたから。"], "answer": 1, "explain": "「極楽寺・高良などを拝みて、かばかりと心得て帰りにけり」とあり、それだけで目的を果たしたと思い込んでいる。"}, {"kind": "choice", "field": "古典", "topic": "古典_文法（品詞・意味）", "no": 3, "q": "「あらまほしき」の意味として最も適切なのは、次のうちではどれか。", "choices": ["あってはならない", "あってほしい", "あるはずがない", "あったとしても構わない"], "answer": 1, "explain": "「まほし」は願望を表す助動詞で、「あらまほし」は「あってほしい」という意味になる。"}, {"kind": "choice", "field": "古典", "topic": "古典_主旨理解", "no": 4, "q": "最後の一文「少しのことにも、先達はあらまほしき事なり」が伝えていることとして最も適切なのは、次のうちではどれか。", "choices": ["どんなに小さなことでも、案内してくれる人がいた方がよいということ。", "参拝は一人で行うべきであり、案内人は不要だということ。", "先達（案内人）よりも自分の判断を信じるべきだということ。", "小さなことは気にせず、大まかに行動すればよいということ。"], "answer": 0, "explain": "この法師が案内人なしで参拝し、本来の目的（本殿）を見逃した失敗から、案内人の必要性が説かれている。"}, {"kind": "choice", "field": "古典", "topic": "古典_本文内容一致", "no": 5, "q": "本文の内容として最も適切なのは、次のうちではどれか。", "choices": ["法師は毎年石清水八幡宮に参拝していた。", "法師は徒歩で一人、石清水八幡宮に参詣した。", "法師は山の上まで登り、本殿を参拝した。", "法師は仲間と一緒に参拝の旅に出た。"], "answer": 1, "explain": "「あるとき思ひ立ちて、ただ一人、徒歩よりまうでけり」とあり、一人で徒歩で参詣したことがわかる。"}]}, {"id": "q5", "title": "大問五　次の各問に答えよ。", "lead": null, "items": [{"kind": "choice", "field": "文法", "topic": "文法_品詞の識別", "no": 1, "q": "「彼はとても優しい人だ。」の下線を付けた「とても」の品詞として適切なのは、次のうちではどれか。", "choices": ["名詞", "副詞", "形容詞", "連体詞"], "answer": 1, "explain": "「とても」は用言（「優しい」）を修飾する副詞。"}, {"kind": "choice", "field": "文法", "topic": "文法_敬語の種類", "no": 2, "q": "「先生が明日の予定をおっしゃった。」の下線を付けた「おっしゃった」の敬語の種類として適切なのは、次のうちではどれか。", "choices": ["尊敬語", "謙譲語", "丁寧語", "美化語"], "answer": 0, "explain": "「おっしゃる」は「言う」の尊敬語で、相手（先生）の動作を高めて表現している。"}, {"kind": "choice", "field": "文法", "topic": "文法_助動詞の意味", "no": 3, "q": "「天気予報によると、明日は雨が降るそうだ。」の下線を付けた「そうだ」の意味として適切なのは、次のうちではどれか。", "choices": ["様態（そのような様子だ）", "伝聞（人から聞いた）", "推定", "比況（たとえ）"], "answer": 1, "explain": "文中に「~によると」のような情報源が示されているときの「そうだ」は伝聞の意味を表す。"}, {"kind": "choice", "field": "文法", "topic": "文法_文節の区切り", "no": 4, "q": "「私は/毎朝/公園を/走る。」の文節の区切り方として適切なのは、次のうちではどれか。", "choices": ["私は／毎朝／公園を／走る（この区切り方が正しい）", "私／は毎朝／公園を／走る", "私は毎朝／公園を走る", "私は／毎朝公園を／走る"], "answer": 0, "explain": "文節は意味を壊さない範囲でできるだけ短く区切った単位。「私は／毎朝／公園を／走る。」の4文節が正しい。"}, {"kind": "choice", "field": "文法", "topic": "文法_活用形", "no": 5, "q": "「早く家に帰れば、雨に降られずに済んだ。」の下線を付けた「帰れば」の活用形として適切なのは、次のうちではどれか。", "choices": ["未然形", "連用形", "終止形", "仮定形"], "answer": 3, "explain": "「帰る」の後に「ば」が続き、順接の仮定条件を表しているため仮定形。"}]}, {"id": "q6", "title": "大問六　次の条件に従って、作文を書け。", "lead": null, "items": [{"kind": "write", "field": "作文", "topic": "作文_意見文", "no": 1, "q": "「挑戦することの意味」というテーマで、自分の体験を踏まえてあなたの考えを二百字以上二百五十字以内で書け。なお、書き出しや改行の際の空欄、句読点や「」も一字と数えよ。", "sample": "私は中学二年のとき、苦手だった水泳部の県大会選考に挑戦した。周りより泳ぐのが遅く、途中で諦めかけたが、毎朝の自主練習を続けるうちに少しずつタイムが縮み、最後には選考を突破できた。挑戦する前は失敗を恐れて動けなかったが、実際に挑んでみると、結果以上に「本気で取り組んだ」という自信が残った。挑戦することの意味は、結果の成功や失敗そのものよりも、行動する中で自分の可能性に気づき、次の一歩を踏み出す力に変えられることにあると私は思う。", "charLimit": 250}]}];
+const MARUS = ["ア","イ","ウ","エ"];
+const root = document.getElementById('quizRoot');
+
+function renderLead(lead) {
+  if (!lead) return '';
+  const escaped = lead.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                       .replace(/先生：/g,'<b>先生：</b>').replace(/生徒：/g,'<b>生徒：</b>');
+  return `<div class="section-lead">${escaped}</div>`;
+}
+
+function renderFillItem(sec, item) {
+  const uid = `${sec.id}-${item.no}`;
+  const html = item.q.replace('{','<u>').replace('}','</u>');
+  return `<div class="item" data-kind="fill" data-field="${item.field||''}" data-topic="${item.topic||''}" data-answer="${item.answer}" id="item-${uid}">
+    <div class="qtext"><span class="qtag">${item.field||''}</span>(${item.no})　${html}
+      <input type="text" class="fill-input" id="fill-${uid}" placeholder="答え"></div>
+    <div class="result-box" id="result-${uid}"></div>
+  </div>`;
+}
+
+function renderChoiceItem(sec, item) {
+  let html = `<div class="item" data-kind="choice" data-field="${item.field||''}" data-topic="${item.topic||''}" data-answer="${item.answer}" id="item-${sec.id}-${item.no}">`;
+  html += `<div class="qtext"><span class="qtag">${item.field||''}</span>〔問${item.no}〕 ${item.q}</div>`;
+  item.choices.forEach((c, i) => {
+    html += `<label class="choice-label">
+      <input type="radio" name="ans-${sec.id}-${item.no}" value="${i}">
+      <span><span class="choice-mark">${MARUS[i]}</span>${c}</span>
+    </label>`;
+  });
+  html += `<div class="result-box" id="result-${sec.id}-${item.no}"></div>`;
+  html += `</div>`;
+  return html;
+}
+
+function renderWriteItem(sec, item) {
+  const uid = `${sec.id}-${item.no}`;
+  const limit = item.charLimit || null;
+  let html = `<div class="item" data-kind="write" data-field="${item.field||''}" data-topic="${item.topic||''}" id="item-${uid}">`;
+  html += `<div class="qtext"><span class="qtag">${item.field||''}</span>〔問${item.no}〕 ${item.q}</div>`;
+  html += `<textarea id="write-${uid}" placeholder="ここに書いてみよう" oninput="updateCharCount('${uid}', ${limit})"></textarea>`;
+  if (limit) html += `<div class="char-count" id="cc-${uid}">0 / ${limit}字</div>`;
+  html += `<div><button class="reveal-btn" onclick="toggleSample('${uid}')">解答例を見る</button>
+    <button class="self-btn" id="ok-${uid}" onclick="setSelf('${uid}','ok')">できた</button>
+    <button class="self-btn" id="ng-${uid}" onclick="setSelf('${uid}','ng')">もう一息</button></div>`;
+  html += `<div class="sample-box" id="sample-${uid}">【解答例】${item.sample}</div>`;
+  html += `</div>`;
+  return html;
+}
+
+function updateCharCount(uid, limit) {
+  const ta = document.getElementById(`write-${uid}`);
+  const cc = document.getElementById(`cc-${uid}`);
+  if (!cc) return;
+  const n = ta.value.length;
+  cc.textContent = `${n} / ${limit}字`;
+  cc.classList.toggle('over', n > limit);
+}
+
+function toggleSample(uid) {
+  const box = document.getElementById(`sample-${uid}`);
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+const selfRatings = {};
+function setSelf(uid, rating) {
+  selfRatings[uid] = rating;
+  const ok = document.getElementById(`ok-${uid}`);
+  const ng = document.getElementById(`ng-${uid}`);
+  ok.classList.toggle('active-ok', rating === 'ok');
+  ng.classList.toggle('active-ng', rating === 'ng');
+}
+
+SECTIONS.forEach(sec => {
+  let html = `<div class="section-card"><div class="section-title">${sec.title}</div>`;
+  html += renderLead(sec.lead);
+  sec.items.forEach(item => {
+    if (item.kind === 'fill') html += renderFillItem(sec, item);
+    else if (item.kind === 'choice') html += renderChoiceItem(sec, item);
+    else html += renderWriteItem(sec, item);
+  });
+  html += `</div>`;
+  root.insertAdjacentHTML('beforeend', html);
+});
+
+let lastResult = null;
+
+function gradeAll() {
+  let correct = 0, total = 0;
+  const byField = {};
+  const weakTopics = [];
+  const detail = [];
+
+  SECTIONS.forEach(sec => {
+    sec.items.forEach(item => {
+      const uid = `${sec.id}-${item.no}`;
+      const field = item.field || '未分類';
+      if (!byField[field]) byField[field] = {correct:0, total:0};
+
+      if (item.kind === 'fill') {
+        total++;
+        byField[field].total++;
+        const input = document.getElementById(`fill-${uid}`);
+        const yourAns = input ? input.value.trim() : '';
+        const isCorrect = yourAns === item.answer;
+        const box = document.getElementById(`result-${uid}`);
+        box.style.display = 'block';
+        if (isCorrect) {
+          correct++; byField[field].correct++;
+          box.className = 'result-box result-correct';
+          box.textContent = `正解！ 【解説】${item.explain}`;
+        } else {
+          box.className = 'result-box result-wrong';
+          box.textContent = `不正解（あなたの回答：${yourAns || '(未回答)'} / 正解：${item.answer}） 【解説】${item.explain}`;
+          weakTopics.push(item.topic || field);
+        }
+        detail.push({section: sec.id, no: item.no, kind:'fill', field, topic:item.topic,
+                      chosen: yourAns || null, correctAnswer: item.answer, isCorrect: !!isCorrect});
+      } else if (item.kind === 'choice') {
+        total++;
+        byField[field].total++;
+        const sel = document.querySelector(`input[name="ans-${uid}"]:checked`);
+        const box = document.getElementById(`result-${uid}`);
+        box.style.display = 'block';
+        const isCorrect = sel && parseInt(sel.value) === item.answer;
+        if (isCorrect) {
+          correct++; byField[field].correct++;
+          box.className = 'result-box result-correct';
+          box.textContent = `正解！ 【解説】${item.explain}`;
+        } else {
+          box.className = 'result-box result-wrong';
+          const chosen = sel ? MARUS[parseInt(sel.value)] : '未回答';
+          box.textContent = `不正解（あなたの回答：${chosen} / 正解：${MARUS[item.answer]}） 【解説】${item.explain}`;
+          weakTopics.push(item.topic || field);
+        }
+        detail.push({section: sec.id, no: item.no, kind:'choice', field, topic: item.topic,
+                      chosen: sel ? MARUS[parseInt(sel.value)] : null, correctAnswer: MARUS[item.answer], isCorrect: !!isCorrect});
+      } else {
+        const rating = selfRatings[uid] || null;
+        if (rating === 'ng') weakTopics.push(item.topic || field);
+        detail.push({section: sec.id, no: item.no, kind: 'write', field, topic: item.topic,
+                      answerText: (document.getElementById(`write-${uid}`)||{}).value || '',
+                      charCount: ((document.getElementById(`write-${uid}`)||{}).value || '').length,
+                      selfRating: rating});
+      }
+    });
+  });
+
+  document.getElementById('scoreNum').textContent = correct;
+  document.getElementById('scoreTotal').textContent = total;
+
+  const tbody = document.querySelector('#fieldTable tbody');
+  tbody.innerHTML = '';
+  Object.keys(byField).forEach(f => {
+    const d = byField[f];
+    const rate = d.total ? Math.round(d.correct/d.total*100) : 0;
+    tbody.insertAdjacentHTML('beforeend', `<tr><td>${f}</td><td>${d.correct}</td><td>${d.total}</td><td>${rate}%</td></tr>`);
+  });
+
+  const weakList = document.getElementById('weakList');
+  if (weakTopics.length) {
+    const uniq = [...new Set(weakTopics)];
+    weakList.innerHTML = '苦手そうな単元：' + uniq.map(t => `<span class="weak-tag">${t}</span>`).join('');
+  } else {
+    weakList.innerHTML = '';
+  }
+
+  document.getElementById('scoreSummary').style.display = 'block';
+  document.getElementById('scoreSummary').scrollIntoView({behavior:'smooth'});
+  document.getElementById('saveBtn').style.display = 'inline-block';
+
+  lastResult = {
+    examTitle: "国語オリジナル問題（V模擬対策・出題範囲分析ベース）",
+    studentName: document.getElementById('studentName').value || null,
+    date: new Date().toISOString(),
+    elapsedSeconds: elapsed,
+    choiceScore: {correct, total},
+    byField,
+    weakTopics: [...new Set(weakTopics)],
+    detail
+  };
+}
+
+async function saveResults() {
+  if (!lastResult) return;
+  const filename = `V模擬国語結果_${lastResult.date.slice(0,10)}_${String(new Date().getHours()).padStart(2,'0')}${String(new Date().getMinutes()).padStart(2,'0')}.json`;
+  const text = JSON.stringify(lastResult, null, 2);
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{description: 'JSON', accept: {'application/json': ['.json']}}]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      alert('保存しました。次回はこのファイルをClaudeに見せてください。');
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      // フォールバックへ
+    }
+  }
+  const blob = new Blob([text], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+let timerInterval = null;
+let elapsed = 0;
+function startTimer() {
+  if (timerInterval) return;
+  timerInterval = setInterval(() => {
+    elapsed++;
+    const m = String(Math.floor(elapsed/60)).padStart(2,'0');
+    const s = String(elapsed%60).padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  elapsed = 0;
+  document.getElementById('timerDisplay').textContent = '00:00';
+}
+</script>
+</body>
+</html>
