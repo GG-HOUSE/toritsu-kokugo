@@ -3,16 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>国語 オリジナル問題（練習用）</title>
+<title>都立高校入試 国語 対策ページ</title>
 <style>
   :root {
-    --main: #7a1f3d;
-    --main-dark: #55152b;
-    --bg: #f4f0ee;
+    --red: #7a1f3d;
+    --red-dark: #4e1327;
+    --blue: #1f4e7a;
+    --blue-dark: #143252;
+    --bg: #f4f6fb;
     --card: #ffffff;
-    --correct: #1a7a3c;
-    --wrong: #b3261e;
-    --lead-bg: #faf8f4;
   }
   * { box-sizing: border-box; }
   body {
@@ -24,374 +23,83 @@
     line-height: 1.7;
   }
   header {
-    background: linear-gradient(135deg, var(--main-dark), var(--main));
+    background: linear-gradient(135deg, var(--red-dark), var(--red));
     color: white;
-    padding: 22px 16px 26px;
+    padding: 32px 16px 34px;
     text-align: center;
   }
-  header h1 { margin: 0 0 4px; font-size: 1.4rem; }
-  header p { margin: 0; font-size: 0.85rem; opacity: 0.9; }
-  .wrap { max-width: 780px; margin: 0 auto; padding: 16px; }
-  .timer-bar {
-    background: white; border-radius: 10px; padding: 10px 14px; margin: -16px auto 16px;
-    max-width: 780px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+  header h1 { margin: 0 0 8px; font-size: 1.5rem; }
+  header p { margin: 0; font-size: 0.95rem; opacity: 0.92; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 40px; }
+  .set-card {
+    background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 22px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08); border-top: 6px solid var(--set-color);
   }
-  .timer-bar span { font-size: 0.85rem; color: #555; }
-  #timerDisplay { font-weight: bold; color: var(--main-dark); font-size: 1.1rem; }
-  .timer-bar button {
-    background: var(--main); color: white; border: none; border-radius: 6px;
-    padding: 6px 12px; font-size: 0.8rem; cursor: pointer;
+  .set-title {
+    font-size: 1.15rem; font-weight: bold; color: var(--set-color-dark);
+    margin: 0 0 4px; display: flex; align-items: center; gap: 8px;
   }
-  .name-bar {
-    background: white; border-radius: 10px; padding: 10px 14px; margin: 0 auto 16px;
-    max-width: 780px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: #555;
+  .set-desc { font-size: 0.85rem; color: #666; margin: 0 0 16px; }
+  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    text-decoration: none; border-radius: 12px; padding: 14px 10px;
+    font-size: 0.92rem; font-weight: bold; text-align: center;
+    border: 2px solid var(--set-color); color: var(--set-color-dark);
+    background: white; transition: transform 0.1s;
   }
-  .name-bar input { border: 1px solid #ccc; border-radius: 6px; padding: 5px 8px; font-size: 0.85rem; }
-  .section-card {
-    background: var(--card); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  .btn:active { transform: scale(0.97); }
+  .btn.main {
+    grid-column: 1 / -1; background: var(--set-color); color: white;
+    padding: 16px 10px; font-size: 1rem;
   }
-  .section-title {
-    background: var(--main); color: white; padding: 10px 14px; border-radius: 8px;
-    font-weight: bold; font-size: 1.0rem; margin-bottom: 12px;
-  }
-  .section-lead {
-    background: var(--lead-bg); border: 1px solid #e5ded4; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;
-    font-size: 0.92rem; color: #333; white-space: pre-wrap;
-  }
-  .item { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed #ddd; }
-  .item:last-child { border-bottom: none; margin-bottom: 0; }
-  .qtext { font-weight: bold; margin-bottom: 8px; font-size: 0.97rem; }
-  .qtag { display:inline-block; font-size:0.72rem; background:#f3e6ea; color:var(--main-dark); border-radius:4px; padding:1px 6px; margin-right:6px; font-weight:normal; }
-  .choice-label {
-    display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border-radius: 8px;
-    margin-bottom: 6px; cursor: pointer; border: 1px solid #e2e5ec; transition: background 0.15s;
-  }
-  .choice-label:hover { background: #f9f5f6; }
-  .choice-label input { margin-top: 3px; flex-shrink: 0; }
-  .choice-mark { font-weight: bold; color: var(--main-dark); margin-right: 2px; }
-  input[type=text].fill-input {
-    border: 1px solid #bbb; border-radius: 6px; padding: 6px 10px; font-size: 0.95rem;
-    font-family: inherit; width: 160px; margin-left: 6px;
-  }
-  textarea {
-    width: 100%; min-height: 70px; border-radius: 8px; border: 1px solid #ccc; padding: 8px;
-    font-family: inherit; font-size: 0.92rem; resize: vertical;
-  }
-  .char-count { font-size: 0.8rem; color: #888; text-align: right; margin-top: 2px; }
-  .char-count.over { color: var(--wrong); font-weight: bold; }
-  .reveal-btn, .self-btn {
-    margin-top: 6px; background: #f3e6ea; color: var(--main-dark); border: 1px solid var(--main);
-    border-radius: 6px; padding: 5px 10px; font-size: 0.8rem; cursor: pointer; margin-right: 6px;
-  }
-  .self-btn.active-ok { background: var(--correct); color: white; border-color: var(--correct); }
-  .self-btn.active-ng { background: var(--wrong); color: white; border-color: var(--wrong); }
-  .sample-box {
-    display: none; margin-top: 8px; background: #eafaf0; border-left: 4px solid var(--correct);
-    padding: 8px 10px; font-size: 0.88rem; border-radius: 4px;
-  }
-  .result-box { display: none; margin-top: 8px; padding: 8px 10px; border-radius: 6px; font-size: 0.88rem; }
-  .result-correct { background: #eafaf0; border-left: 4px solid var(--correct); color: #185c30; }
-  .result-wrong { background: #fdecea; border-left: 4px solid var(--wrong); color: #8c2a22; }
-  .grade-bar {
-    position: sticky; bottom: 0; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
-    padding: 12px 16px; text-align: center; z-index: 10; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
-  }
-  .grade-btn {
-    background: var(--main); color: white; border: none; border-radius: 24px;
-    padding: 12px 28px; font-size: 1rem; font-weight: bold; cursor: pointer;
-  }
-  .save-btn {
-    background: #1a7a3c; color: white; border: none; border-radius: 24px;
-    padding: 12px 28px; font-size: 1rem; font-weight: bold; cursor: pointer; display:none;
-  }
-  .grade-btn:active, .save-btn:active { transform: scale(0.97); }
-  #scoreSummary {
-    max-width: 780px; margin: 0 auto 16px; background: white; border-radius: 12px; padding: 18px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: none;
-  }
-  #scoreSummary .headline { text-align:center; }
-  #scoreSummary .big { font-size: 2rem; font-weight: bold; color: var(--main-dark); }
-  #fieldTable { width:100%; border-collapse: collapse; margin-top: 14px; font-size: 0.85rem; }
-  #fieldTable th, #fieldTable td { border-bottom: 1px solid #eee; padding: 6px 4px; text-align: left; }
-  #fieldTable th { color: #888; font-weight: normal; }
-  .weak-tag { display:inline-block; background:#fdecea; color:var(--wrong); border-radius:4px; padding:2px 7px; margin:2px 4px 2px 0; font-size:0.78rem; }
-  .footer-note { text-align: center; font-size: 0.75rem; color: #999; padding: 20px 16px 40px; }
+  .footer-note { text-align: center; font-size: 0.78rem; color: #999; padding: 10px 16px 30px; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>国語　オリジナル問題　第1回</h1>
-  <p>都立高校入試 出題傾向分析に基づくオリジナル予想問題（練習用）</p>
+  <h1>📖 都立高校入試 国語 対策ページ</h1>
+  <p>見たいものを選んでね</p>
 </header>
 
-<div class="timer-bar">
-  <span>目安時間 50分　経過：<span id="timerDisplay">00:00</span></span>
-  <div>
-    <button onclick="startTimer()">開始</button>
-    <button onclick="resetTimer()">リセット</button>
+<div class="wrap">
+
+  <div class="set-card" style="--set-color:var(--red); --set-color-dark:var(--red-dark);">
+    <div class="set-title">🔴 都立入試 対策問題　第1回</div>
+    <p class="set-desc">出題傾向にもとづくオリジナル予想問題</p>
+    <div class="btn-grid">
+      <a class="btn main" href="国語_オリジナル問題_練習用.html">✏️ 問題をパソコン・スマホで解く</a>
+      <a class="btn" href="都立国語_傾向と対策.pdf">📊 傾向と対策</a>
+      <a class="btn" href="都立国語_オリジナル問題.pdf">📄 問題（PDF）</a>
+      <a class="btn" href="都立国語_解答解説.pdf">✅ 解答解説</a>
+    </div>
   </div>
-</div>
 
-<div class="name-bar">
-  名前：<input type="text" id="studentName" placeholder="（任意）記録用の名前">
-</div>
-
-<div class="wrap" id="quizRoot"></div>
-
-<div id="scoreSummary">
-  <div class="headline">
-    <div>選択式・漢字の正答数</div>
-    <div class="big"><span id="scoreNum">0</span> / <span id="scoreTotal">0</span></div>
-    <div style="font-size:0.85rem;color:#666;margin-top:6px;">作文（200字）は解答例と見比べて、「できた／もう一息」ボタンで自己評価してください。</div>
+  <div class="set-card" style="--set-color:var(--red); --set-color-dark:var(--red-dark);">
+    <div class="set-title">🔴 都立入試 対策問題　第2回（弱点特化）</div>
+    <p class="set-desc">出題傾向にもとづくオリジナル予想問題（第2回）</p>
+    <div class="btn-grid">
+      <a class="btn main" href="国語_オリジナル問題_練習用_第2回.html">✏️ 問題をパソコン・スマホで解く</a>
+      <a class="btn" href="都立国語_オリジナル問題_第2回.pdf">📄 問題（PDF）</a>
+      <a class="btn" href="都立国語_解答解説_第2回.pdf">✅ 解答解説</a>
+    </div>
   </div>
-  <table id="fieldTable"><thead><tr><th>分野</th><th>正答</th><th>問題数</th><th>正答率</th></tr></thead><tbody></tbody></table>
-  <div id="weakList" style="margin-top:10px;"></div>
+
+  <div class="set-card" style="--set-color:var(--blue); --set-color-dark:var(--blue-dark);">
+    <div class="set-title">🔵 Vもぎ対策問題</div>
+    <p class="set-desc">Vもぎの出題傾向にもとづくオリジナル予想問題</p>
+    <div class="btn-grid">
+      <a class="btn main" href="国語_V模擬対策/V模擬国語_オリジナル問題_練習用.html">✏️ 問題をパソコン・スマホで解く</a>
+      <a class="btn" href="国語_V模擬対策/V模擬国語_傾向と対策.pdf">📊 傾向と対策</a>
+      <a class="btn" href="国語_V模擬対策/V模擬国語_オリジナル問題.pdf">📄 問題（PDF）</a>
+      <a class="btn" href="国語_V模擬対策/V模擬国語_解答解説.pdf">✅ 解答解説</a>
+    </div>
+  </div>
+
 </div>
 
-<div class="grade-bar">
-  <button class="grade-btn" onclick="gradeAll()">採点する</button>
-  <button class="save-btn" id="saveBtn" onclick="saveResults()">結果を保存する</button>
-</div>
+<div class="footer-note">この問題は過去問そのものではなく、出題傾向分析に基づき新規作成したオリジナル問題です。</div>
 
-<div class="footer-note">この問題は過去問そのものではなく、出題傾向分析に基づき新規作成したオリジナル問題です。保存した結果ファイルをClaudeに見せると、苦手分野に合わせた次の問題を作れます。</div>
-
-<script>
-const SECTIONS = [{"id": "q1", "title": "大問一　次の各文の下線を付けた漢字の読みがなを書け。", "lead": null, "items": [{"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 1, "q": "彼女は困難な状況でも{冷静}に判断を下した。", "answer": "れいせい", "explain": "「冷静」は物事に動じず落ち着いていること。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 2, "q": "山頂からの{眺め}は筆舌に尽くしがたいほど美しかった。", "answer": "ながめ", "explain": "「眺め」は見渡した景色のこと。訓読み。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 3, "q": "祖父は若い頃、{遠洋}漁業に従事していた。", "answer": "えんよう", "explain": "「遠洋」は陸地から遠く離れた海のこと。「えんよう」と読む。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 4, "q": "その提案は委員会で{承認}された。", "answer": "しょうにん", "explain": "「承認」は正式に認めること。「しょうにん」と読む。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 5, "q": "彼は{謙虚}な態度で先輩の助言を受け入れた。", "answer": "けんきょ", "explain": "「謙虚」はへりくだって控えめなこと。"}]}, {"id": "q2", "title": "大問二　次の各文の下線を付けたカタカナの部分に当たる漢字を、楷書で丁寧に書け。", "lead": null, "items": [{"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 1, "q": "台風の接近に{ソナえて}、食料を買い込んだ。", "answer": "備えて", "explain": "送り仮名「えて」まで正確に。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 2, "q": "彼はチームの{カナメ}として活躍した。", "answer": "要", "explain": "「要」は最も大切な部分という意味。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 3, "q": "新しい制度を{ドウニュウ}する。", "answer": "導入", "explain": "「導入」は新しく取り入れること。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 4, "q": "事件の{ケイイ}を詳しく説明する。", "answer": "経緯", "explain": "「経緯」は物事の込み入った事情。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 5, "q": "彼女の意見に賛成する人が{フえて}きた。", "answer": "増えて", "explain": "送り仮名「えて」まで正確に。"}]}, {"id": "q3", "title": "大問三　次の文章を読んで、あとの各問に答えよ。", "lead": "高校二年生の悠斗は、美術部の部室で一人、キャンバスに向かっていた。夏の全国大会に出す作品のテーマは「故郷」。締め切りは三日後に迫っている。\n　筆を持つ手が、何度も止まる。悠斗の頭に浮かぶのは、幼い頃に祖母と歩いた田んぼ道だった。稲穂が風に揺れる音、遠くで鳴く蟬の声、祖母の日に焼けた手の感触。けれど、それをどう描けばいいのか、悠斗にはまだ分からなかった。\n　「まだ手を付けてないの？」\n　部室の扉を開けて入ってきたのは、幼馴染の美咲だった。美咲はすでに自分の作品を仕上げ、額装まで終えている。悠斗のまっさらなキャンバスを見て、少し呆れたように笑った。\n　「うまく描けないんだ。故郷って言われても、写真みたいに正確に描くのが正しいのか、自分の記憶のまま描いていいのか、分からなくて」\n　美咲は椅子を引いて悠斗の隣に座ると、しばらく黙ってキャンバスを見つめた。\n　「正確に描くことが目的じゃないと思うよ。悠斗が覚えてる音とか匂いとか、そういうのを絵の具に変えればいいんじゃない？」\n　その言葉を聞いた瞬間、悠斗の中で何かが動いた。写真のような正確さを求めていたのは、自分自身に自信が持てなかったからだと気づいた。記憶の中の田んぼ道は、輪郭がぼやけていても、確かに悠斗だけのものだった。\n　悠斗は筆を洗い、パレットに黄緑と金色の絵の具を出した。稲穂の揺れる感じを、記憶のままに、少しゆがんだ線で描いていく。正確さよりも、あの時感じた温かさを画面に閉じ込めることだけを考えた。\n　窓の外では、蟬がまだ鳴いていた。悠斗はその声を聞きながら、初めて迷いなく筆を動かし続けた。", "items": [{"kind": "choice", "field": "小説文", "topic": "小説_心情把握", "no": 1, "q": "傍線部「筆を持つ手が、何度も止まる」とあるが、この時の悠斗の心情として最も適切なのは、次のうちではどれか。", "choices": ["締め切りに間に合わないことへの焦りで、何も考えられなくなっている。", "故郷をどう表現すればよいか定まらず、迷いを抱えている。", "美術部をやめたい気持ちが強まり、絵を描く意欲を失っている。", "祖母との思い出を忘れてしまったことに気づき、動揺している。"], "answer": 1, "explain": "悠斗は「写真のように正確に描くべきか、記憶のまま描いてよいか」という表現方針で迷っており、筆が止まるのはその逡巡を表す。"}, {"kind": "choice", "field": "小説文", "topic": "小説_人物描写理解", "no": 2, "q": "傍線部「悠斗のまっさらなキャンバスを見て、少し呆れたように笑った」とあるが、この表現から読み取れる美咲の様子として最も適切なのは、次のうちではどれか。", "choices": ["悠斗の才能のなさに落胆し、見放そうとしている。", "自分の作品の完成度に満足し、優越感を抱いている。", "進み具合の遅い悠斗を気にかけながらも、親しみを込めてからかっている。", "締め切りに遅れる悠斗に本気で腹を立てている。"], "answer": 2, "explain": "直後に美咲は悠斗の隣に座り、助言を与えている。「呆れたように笑った」は親しい間柄でのからかいであり、突き放す態度ではない。"}, {"kind": "choice", "field": "小説文", "topic": "小説_心情変化", "no": 3, "q": "傍線部「その言葉を聞いた瞬間、悠斗の中で何かが動いた」とあるが、このときの悠斗の変化を説明したものとして最も適切なのは、次のうちではどれか。", "choices": ["正確な写生を目指すべきだという確信を強めた。", "記憶に頼ることへの不安から、写真を見て描く決心をした。", "正確さにこだわっていた自分の思い込みに気づき、自分の記憶を信じようとし始めた。", "美咲の作品をまねて描けばよいと考えるようになった。"], "answer": 2, "explain": "続く段落で「写真のような正確さを求めていたのは、自分自身に自信が持てなかったから」と気づく描写があり、記憶を信じる方向へ転換している。"}, {"kind": "choice", "field": "小説文", "topic": "小説_情景描写の効果", "no": 4, "q": "本文における「蟬」の描写について述べたものとして最も適切なのは、次のうちではどれか。", "choices": ["悠斗の焦りを強調するため、蟬の声がうるさく響く様子を描いている。", "冒頭と末尾に置くことで、悠斗の心情の変化を挟み込むように示している。", "美咲との対比のために、静寂を表す音として用いられている。", "故郷の情景を否定的に描くための象徴として用いられている。"], "answer": 1, "explain": "蟬の声は回想の場面と結末の場面の両方に登場し、心情の変化の前後を結びつける枠の役割を果たしている。"}, {"kind": "choice", "field": "小説文", "topic": "小説_表現技法", "no": 5, "q": "この文章の表現の特徴について述べたものとして最も適切なのは、次のうちではどれか。", "choices": ["悠斗と美咲、二人の視点を交互に描くことで、互いの誤解を丁寧に解いている。", "悠斗の内面の動きを中心に描きながら、美咲との短い対話を通して心情の転換点を示している。", "会話文を用いずに、地の文だけで登場人物の心情を説明している。", "過去と現在の場面を頻繁に往復させることで、複雑な構成を作り出している。"], "answer": 1, "explain": "語りは一貫して悠斗の内面に寄り添っており、美咲との短い会話が心情の転換のきっかけとして機能している。"}]}, {"id": "q4", "title": "大問四　次の文章を読んで、あとの各問に答えよ。", "lead": "私たちは日常のほとんどの時間を、言葉を使って過ごしている。しかし、言葉が本当に相手に「伝わって」いるかどうかを、私たちはどれほど意識しているだろうか。\n　言葉には、二つの働きがあると私は考えている。一つは、情報を正確に伝える働きである。天気予報や道案内のように、誤解が生じれば実害につながるような場面では、言葉はできるだけ曖昧さを排除し、一義的な意味を運ぶ道具として機能する。\n　もう一つは、情報そのものよりも、話し手と聞き手の間に関係性を作り出す働きである。たとえば友人同士の何気ない会話は、内容の正確さよりも、その場を共有しているという実感を生み出すために交わされることが多い。「今日は暑いね」という一言に、天気の情報以上の意味を私たちは無意識に込めている。\n　現代社会では、この二つの働きが混同されがちである。効率を重視するあまり、言葉を情報伝達の道具としてのみ扱い、関係性を築く働きを軽視する傾向が強まっているように思われる。短いメッセージのやり取りが日常化し、絵文字や定型句によって感情の機微を省略することに、私たちは慣れすぎてしまったのではないか。\n　だが、言葉によって関係を築くという営みは、効率化できるものではない。むしろ、遠回りに見える会話や、すぐには結論の出ないやり取りの中にこそ、相手を理解しようとする姿勢が表れる。効率を優先して言葉を削ぎ落としていくことは、同時に、他者と深く関わる機会を削ぎ落としていくことにもなりかねない。\n　私たちに求められているのは、情報伝達としての言葉と、関係構築としての言葉、その両方を意識的に使い分ける態度である。便利さの中に埋もれがちなもう一つの働きを、私たちは今こそ思い出す必要がある。", "items": [{"kind": "choice", "field": "論説文", "topic": "論説文_内容理解", "no": 1, "q": "傍線部「言葉には、二つの働きがある」とあるが、筆者が挙げる二つの働きの説明として最も適切なのは、次のうちではどれか。", "choices": ["情報を娯楽として伝える働きと、情報を記録として残す働き。", "情報を正確に伝える働きと、話し手と聞き手の関係性を作り出す働き。", "相手を説得する働きと、相手を励ます働き。", "過去の出来事を伝える働きと、未来の予定を伝える働き。"], "answer": 1, "explain": "第2・第3段落で、正確な情報伝達の働きと、関係性を作り出す働きの二つが対比的に説明されている。"}, {"kind": "choice", "field": "論説文", "topic": "論説文_具体例の解釈", "no": 2, "q": "傍線部「『今日は暑いね』という一言に、天気の情報以上の意味を私たちは無意識に込めている」とあるが、この「意味」として筆者が想定しているものとして最も適切なのは、次のうちではどれか。", "choices": ["相手に正確な気温を伝えようとする配慮。", "その場を共有しているという実感や、相手とのつながりの確認。", "相手の体調を気遣う医学的な助言。", "会話を早く終わらせたいという意図。"], "answer": 1, "explain": "この具体例は「関係性を作り出す働き」の説明として挙げられており、情報の正確さではなく共有感・つながりを示す例である。"}, {"kind": "choice", "field": "論説文", "topic": "論説文_筆者の主張理解", "no": 3, "q": "筆者が現代社会の傾向として問題視していることとして最も適切なのは、次のうちではどれか。", "choices": ["言葉の正確さを軽視し、曖昧な表現ばかりが増えていること。", "効率を重視するあまり、言葉が関係を築く働きを軽視されがちであること。", "会話の機会そのものが減少し、沈黙が増えていること。", "絵文字や定型句が禁止され、感情を表現しにくくなっていること。"], "answer": 1, "explain": "第4段落で「効率を重視するあまり、関係性を築く働きを軽視する傾向」が問題として指摘されている。"}, {"kind": "choice", "field": "論説文", "topic": "論説文_論理構成", "no": 4, "q": "この文章の論の進め方について述べたものとして最も適切なのは、次のうちではどれか。", "choices": ["具体例を示さず、抽象的な定義のみによって主張を展開している。", "言葉の二つの働きを対比的に示した上で、現代社会における問題点を指摘し、最後に筆者の主張を述べている。", "反対意見を詳しく取り上げ、それを一つずつ反証することで主張を補強している。", "時代を追って言葉の変化を歴史的に説明している。"], "answer": 1, "explain": "定義・対比を示した上で現代社会の問題点を指摘し、最後に主張を述べる構成をとっている。"}, {"kind": "write", "field": "論説文", "topic": "作文_意見文", "no": 5, "q": "国語の授業でこの文章を読んだ後、「言葉によって人とつながること」というテーマで自分の意見を発表することになった。このときにあなたが話す言葉を、具体的な体験や見聞も含めて二百字以内で書け。なお、書き出しや改行の際の空欄、句読点や「」も一字と数えよ。", "sample": "私は文化祭の準備で、意見が対立したクラスメートと何度も話し合った経験がある。最初は早く結論を出そうとして言い争いになったが、互いの考えを丁寧に聞き合ううちに相手の意図が見えてきて、少しずつ歩み寄ることができた。効率よく決めることよりも、時間をかけて言葉を交わす過程そのものが、相手との信頼関係を築いていたのだと今は思う。だからこそ私は、遠回りに見えても対話を大切にしたいと考える。", "charLimit": 200}]}, {"id": "q5", "title": "大問五　次のＡは、清少納言が書いた「枕草子」の一節（原文）であり、Ｂはその内容について話し合う先生と生徒の対話である。これらの文章を読んで、あとの各問に答えよ。", "lead": "Ａ\n　春はあけぼの。やうやう白くなりゆく山ぎは、少しあかりて、紫だちたる雲の細くたなびきたる。\n　夏は夜。月のころはさらなり、闇もなほ、蛍の多く飛びちがひたる。また、ただ一つ二つなど、ほのかにうち光りて行くもをかし。雨など降るもをかし。\n\nＢ\n先生：「枕草子」の冒頭部分ですね。ここで清少納言は、春と夏それぞれについて、一日のうちのどの時間帯が良いと言っていますか。\n生徒：春は明け方、夏は夜だと言っています。\n先生：そうですね。では、なぜ清少納言は「あけぼの」や「夜」を選んだのだと思いますか。\n生徒：春の明け方は、空の色がだんだん変わっていく様子が美しいからだと思います。「白くなりゆく山ぎは」というのは、夜が明けていく瞬間の微妙な変化を描いているのだと思います。\n先生：良い視点ですね。夏についてはどうですか。\n生徒：夏は、月が出ている夜はもちろん、闇の中を蛍が飛ぶ様子や、雨が降る様子まで肯定的に描かれています。普通なら嫌がられそうな「闇」や「雨」も、「をかし」と評価しているところが面白いと思いました。\n先生：その通りです。清少納言は、一般的にはマイナスに捉えられそうな情景の中にも、美しさや趣を見出しています。こうした感性こそが、「枕草子」が今日まで読み継がれてきた理由の一つだと言えるでしょう。", "items": [{"kind": "choice", "field": "古典融合文", "topic": "古典_現代仮名遣い", "no": 1, "q": "Ａの中の「やうやう」を現代仮名遣いに直したものとして正しいのは、次のうちではどれか。", "choices": ["ようよう", "やうやう", "よおよう", "ようやく"], "answer": 0, "explain": "歴史的仮名遣いの「au」は現代仮名遣いでは「ou」となるため、「やうやう」は「ようよう」となる（意味は「だんだん」だが、仮名遣いの変換は表記上のルールに従う）。"}, {"kind": "choice", "field": "古典融合文", "topic": "古典_内容理解", "no": 2, "q": "生徒の発言から読み取れる、清少納言の感性の特徴として最も適切なのは、次のうちではどれか。", "choices": ["明るく華やかな情景にのみ美を見出す感性。", "一般的には否定的に捉えられがちな情景にも、趣を見出す感性。", "静寂な情景よりも、賑やかな情景を好む感性。", "昼間の情景よりも、時間帯を問わず一様に美を感じる感性。"], "answer": 1, "explain": "生徒は「闇」や「雨」といった、普通は嫌がられそうな情景も「をかし」と評価されている点を指摘している。"}, {"kind": "choice", "field": "古典融合文", "topic": "対談_役割理解", "no": 3, "q": "Ｂの中で先生が生徒の発言を受けて用いている、対話を深める役割として最も適切なのは、次のうちではどれか。", "choices": ["生徒の答えを否定し、正しい解釈へ導いている。", "生徒の発言を認めた上で、さらに考えを引き出す問いを重ねている。", "生徒の発言を無視し、自分の解釈のみを述べている。", "生徒に代わって全ての問いに自ら答えている。"], "answer": 1, "explain": "先生は「そうですね」「良い視点ですね」と生徒の発言を認めた上で、次の問いを重ねて対話を深めている。"}, {"kind": "choice", "field": "古典融合文", "topic": "古典_本文内容一致", "no": 4, "q": "Ａの本文の内容として最も適切なのは、次のうちではどれか。", "choices": ["春は夜が最も趣深いとされている。", "夏は蛍や雨の降る様子も趣があるとされている。", "夏は月の出ていない夜こそ最も良いとされている。", "春はあけぼのよりも昼間が良いとされている。"], "answer": 1, "explain": "「雨など降るもをかし」とあり、蛍だけでなく雨の降る様子も趣があるとされている。"}, {"kind": "choice", "field": "古典融合文", "topic": "対談_主旨理解", "no": 5, "q": "この対話を通して先生が伝えようとしていることとして最も適切なのは、次のうちではどれか。", "choices": ["古典は現代語訳さえ理解すれば、原文を読む必要はないということ。", "「をかし」という言葉は、現代の「面白い」と全く同じ意味であるということ。", "一般的な価値観にとらわれない独自の視点で情景を捉える感性が、作品の魅力につながっているということ。", "「枕草子」は春と夏の場面しか描いていない作品であるということ。"], "answer": 2, "explain": "最後の先生の発言で、一般的にはマイナスに捉えられる情景にも趣を見出す感性が作品の魅力の理由だとまとめている。"}]}];
-const MARUS = ["ア","イ","ウ","エ"];
-const root = document.getElementById('quizRoot');
-
-function renderLead(lead) {
-  if (!lead) return '';
-  const escaped = lead.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-                       .replace(/先生：/g,'<b>先生：</b>').replace(/生徒：/g,'<b>生徒：</b>');
-  return `<div class="section-lead">${escaped}</div>`;
-}
-
-function renderFillItem(sec, item) {
-  const uid = `${sec.id}-${item.no}`;
-  const html = item.q.replace('{','<u>').replace('}','</u>');
-  return `<div class="item" data-kind="fill" data-field="${item.field||''}" data-topic="${item.topic||''}" data-answer="${item.answer}" id="item-${uid}">
-    <div class="qtext"><span class="qtag">${item.field||''}</span>(${item.no})　${html}
-      <input type="text" class="fill-input" id="fill-${uid}" placeholder="答え"></div>
-    <div class="result-box" id="result-${uid}"></div>
-  </div>`;
-}
-
-function renderChoiceItem(sec, item) {
-  let html = `<div class="item" data-kind="choice" data-field="${item.field||''}" data-topic="${item.topic||''}" data-answer="${item.answer}" id="item-${sec.id}-${item.no}">`;
-  html += `<div class="qtext"><span class="qtag">${item.field||''}</span>〔問${item.no}〕 ${item.q}</div>`;
-  item.choices.forEach((c, i) => {
-    html += `<label class="choice-label">
-      <input type="radio" name="ans-${sec.id}-${item.no}" value="${i}">
-      <span><span class="choice-mark">${MARUS[i]}</span>${c}</span>
-    </label>`;
-  });
-  html += `<div class="result-box" id="result-${sec.id}-${item.no}"></div>`;
-  html += `</div>`;
-  return html;
-}
-
-function renderWriteItem(sec, item) {
-  const uid = `${sec.id}-${item.no}`;
-  const limit = item.charLimit || null;
-  let html = `<div class="item" data-kind="write" data-field="${item.field||''}" data-topic="${item.topic||''}" id="item-${uid}">`;
-  html += `<div class="qtext"><span class="qtag">${item.field||''}</span>〔問${item.no}〕 ${item.q}</div>`;
-  html += `<textarea id="write-${uid}" placeholder="ここに書いてみよう" oninput="updateCharCount('${uid}', ${limit})"></textarea>`;
-  if (limit) html += `<div class="char-count" id="cc-${uid}">0 / ${limit}字</div>`;
-  html += `<div><button class="reveal-btn" onclick="toggleSample('${uid}')">解答例を見る</button>
-    <button class="self-btn" id="ok-${uid}" onclick="setSelf('${uid}','ok')">できた</button>
-    <button class="self-btn" id="ng-${uid}" onclick="setSelf('${uid}','ng')">もう一息</button></div>`;
-  html += `<div class="sample-box" id="sample-${uid}">【解答例】${item.sample}</div>`;
-  html += `</div>`;
-  return html;
-}
-
-function updateCharCount(uid, limit) {
-  const ta = document.getElementById(`write-${uid}`);
-  const cc = document.getElementById(`cc-${uid}`);
-  if (!cc) return;
-  const n = ta.value.length;
-  cc.textContent = `${n} / ${limit}字`;
-  cc.classList.toggle('over', n > limit);
-}
-
-function toggleSample(uid) {
-  const box = document.getElementById(`sample-${uid}`);
-  box.style.display = box.style.display === 'block' ? 'none' : 'block';
-}
-
-const selfRatings = {};
-function setSelf(uid, rating) {
-  selfRatings[uid] = rating;
-  const ok = document.getElementById(`ok-${uid}`);
-  const ng = document.getElementById(`ng-${uid}`);
-  ok.classList.toggle('active-ok', rating === 'ok');
-  ng.classList.toggle('active-ng', rating === 'ng');
-}
-
-SECTIONS.forEach(sec => {
-  let html = `<div class="section-card"><div class="section-title">${sec.title}</div>`;
-  html += renderLead(sec.lead);
-  sec.items.forEach(item => {
-    if (item.kind === 'fill') html += renderFillItem(sec, item);
-    else if (item.kind === 'choice') html += renderChoiceItem(sec, item);
-    else html += renderWriteItem(sec, item);
-  });
-  html += `</div>`;
-  root.insertAdjacentHTML('beforeend', html);
-});
-
-let lastResult = null;
-
-function gradeAll() {
-  let correct = 0, total = 0;
-  const byField = {};
-  const weakTopics = [];
-  const detail = [];
-
-  SECTIONS.forEach(sec => {
-    sec.items.forEach(item => {
-      const uid = `${sec.id}-${item.no}`;
-      const field = item.field || '未分類';
-      if (!byField[field]) byField[field] = {correct:0, total:0};
-
-      if (item.kind === 'fill') {
-        total++;
-        byField[field].total++;
-        const input = document.getElementById(`fill-${uid}`);
-        const yourAns = input ? input.value.trim() : '';
-        const isCorrect = yourAns === item.answer;
-        const box = document.getElementById(`result-${uid}`);
-        box.style.display = 'block';
-        if (isCorrect) {
-          correct++; byField[field].correct++;
-          box.className = 'result-box result-correct';
-          box.textContent = `正解！ 【解説】${item.explain}`;
-        } else {
-          box.className = 'result-box result-wrong';
-          box.textContent = `不正解（あなたの回答：${yourAns || '(未回答)'} / 正解：${item.answer}） 【解説】${item.explain}`;
-          weakTopics.push(item.topic || field);
-        }
-        detail.push({section: sec.id, no: item.no, kind:'fill', field, topic:item.topic,
-                      chosen: yourAns || null, correctAnswer: item.answer, isCorrect: !!isCorrect});
-      } else if (item.kind === 'choice') {
-        total++;
-        byField[field].total++;
-        const sel = document.querySelector(`input[name="ans-${uid}"]:checked`);
-        const box = document.getElementById(`result-${uid}`);
-        box.style.display = 'block';
-        const isCorrect = sel && parseInt(sel.value) === item.answer;
-        if (isCorrect) {
-          correct++; byField[field].correct++;
-          box.className = 'result-box result-correct';
-          box.textContent = `正解！ 【解説】${item.explain}`;
-        } else {
-          box.className = 'result-box result-wrong';
-          const chosen = sel ? MARUS[parseInt(sel.value)] : '未回答';
-          box.textContent = `不正解（あなたの回答：${chosen} / 正解：${MARUS[item.answer]}） 【解説】${item.explain}`;
-          weakTopics.push(item.topic || field);
-        }
-        detail.push({section: sec.id, no: item.no, kind:'choice', field, topic: item.topic,
-                      chosen: sel ? MARUS[parseInt(sel.value)] : null, correctAnswer: MARUS[item.answer], isCorrect: !!isCorrect});
-      } else {
-        const rating = selfRatings[uid] || null;
-        if (rating === 'ng') weakTopics.push(item.topic || field);
-        detail.push({section: sec.id, no: item.no, kind: 'write', field, topic: item.topic,
-                      answerText: (document.getElementById(`write-${uid}`)||{}).value || '',
-                      charCount: ((document.getElementById(`write-${uid}`)||{}).value || '').length,
-                      selfRating: rating});
-      }
-    });
-  });
-
-  document.getElementById('scoreNum').textContent = correct;
-  document.getElementById('scoreTotal').textContent = total;
-
-  const tbody = document.querySelector('#fieldTable tbody');
-  tbody.innerHTML = '';
-  Object.keys(byField).forEach(f => {
-    const d = byField[f];
-    const rate = d.total ? Math.round(d.correct/d.total*100) : 0;
-    tbody.insertAdjacentHTML('beforeend', `<tr><td>${f}</td><td>${d.correct}</td><td>${d.total}</td><td>${rate}%</td></tr>`);
-  });
-
-  const weakList = document.getElementById('weakList');
-  if (weakTopics.length) {
-    const uniq = [...new Set(weakTopics)];
-    weakList.innerHTML = '苦手そうな単元：' + uniq.map(t => `<span class="weak-tag">${t}</span>`).join('');
-  } else {
-    weakList.innerHTML = '';
-  }
-
-  document.getElementById('scoreSummary').style.display = 'block';
-  document.getElementById('scoreSummary').scrollIntoView({behavior:'smooth'});
-  document.getElementById('saveBtn').style.display = 'inline-block';
-
-  lastResult = {
-    examTitle: "国語オリジナル問題 第1回（都立高校入試 出題傾向分析ベース）",
-    studentName: document.getElementById('studentName').value || null,
-    date: new Date().toISOString(),
-    elapsedSeconds: elapsed,
-    choiceScore: {correct, total},
-    byField,
-    weakTopics: [...new Set(weakTopics)],
-    detail
-  };
-}
-
-async function saveResults() {
-  if (!lastResult) return;
-  const filename = `国語結果_${lastResult.date.slice(0,10)}_${String(new Date().getHours()).padStart(2,'0')}${String(new Date().getMinutes()).padStart(2,'0')}.json`;
-  const text = JSON.stringify(lastResult, null, 2);
-
-  if (window.showSaveFilePicker) {
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: filename,
-        types: [{description: 'JSON', accept: {'application/json': ['.json']}}]
-      });
-      const writable = await handle.createWritable();
-      await writable.write(text);
-      await writable.close();
-      alert('保存しました。次回はこのファイルをClaudeに見せてください。');
-      return;
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      // フォールバックへ
-    }
-  }
-  const blob = new Blob([text], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-let timerInterval = null;
-let elapsed = 0;
-function startTimer() {
-  if (timerInterval) return;
-  timerInterval = setInterval(() => {
-    elapsed++;
-    const m = String(Math.floor(elapsed/60)).padStart(2,'0');
-    const s = String(elapsed%60).padStart(2,'0');
-    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
-  }, 1000);
-}
-function resetTimer() {
-  clearInterval(timerInterval);
-  timerInterval = null;
-  elapsed = 0;
-  document.getElementById('timerDisplay').textContent = '00:00';
-}
-</script>
 </body>
 </html>
