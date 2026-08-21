@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国語 オリジナル問題 第3回（漢字の書き・作文特化・練習用）</title>
+<style>
+  :root {
+    --main: #7a1f3d;
+    --main-dark: #55152b;
+    --bg: #f4f0ee;
+    --card: #ffffff;
+    --correct: #1a7a3c;
+    --wrong: #b3261e;
+    --lead-bg: #faf8f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 0;
+    color: #222;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, var(--main-dark), var(--main));
+    color: white;
+    padding: 22px 16px 26px;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 4px; font-size: 1.4rem; }
+  header p { margin: 0; font-size: 0.85rem; opacity: 0.9; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 16px; }
+  .timer-bar {
+    background: white; border-radius: 10px; padding: 10px 14px; margin: -16px auto 16px;
+    max-width: 780px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .timer-bar span { font-size: 0.85rem; color: #555; }
+  #timerDisplay { font-weight: bold; color: var(--main-dark); font-size: 1.1rem; }
+  .timer-bar button {
+    background: var(--main); color: white; border: none; border-radius: 6px;
+    padding: 6px 12px; font-size: 0.8rem; cursor: pointer;
+  }
+  .name-bar {
+    background: white; border-radius: 10px; padding: 10px 14px; margin: 0 auto 16px;
+    max-width: 780px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: #555;
+  }
+  .name-bar input { border: 1px solid #ccc; border-radius: 6px; padding: 5px 8px; font-size: 0.85rem; }
+  .section-card {
+    background: var(--card); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section-title {
+    background: var(--main); color: white; padding: 10px 14px; border-radius: 8px;
+    font-weight: bold; font-size: 1.0rem; margin-bottom: 12px;
+  }
+  .section-lead {
+    background: var(--lead-bg); border: 1px solid #e5ded4; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;
+    font-size: 0.92rem; color: #333; white-space: pre-wrap;
+  }
+  .item { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed #ddd; }
+  .item:last-child { border-bottom: none; margin-bottom: 0; }
+  .qtext { font-weight: bold; margin-bottom: 8px; font-size: 0.97rem; }
+  .qtag { display:inline-block; font-size:0.72rem; background:#f3e6ea; color:var(--main-dark); border-radius:4px; padding:1px 6px; margin-right:6px; font-weight:normal; }
+  .choice-label {
+    display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border-radius: 8px;
+    margin-bottom: 6px; cursor: pointer; border: 1px solid #e2e5ec; transition: background 0.15s;
+  }
+  .choice-label:hover { background: #f9f5f6; }
+  .choice-label input { margin-top: 3px; flex-shrink: 0; }
+  .choice-mark { font-weight: bold; color: var(--main-dark); margin-right: 2px; }
+  input[type=text].fill-input {
+    border: 1px solid #bbb; border-radius: 6px; padding: 6px 10px; font-size: 0.95rem;
+    font-family: inherit; width: 160px; margin-left: 6px;
+  }
+  textarea {
+    width: 100%; min-height: 70px; border-radius: 8px; border: 1px solid #ccc; padding: 8px;
+    font-family: inherit; font-size: 0.92rem; resize: vertical;
+  }
+  .char-count { font-size: 0.8rem; color: #888; text-align: right; margin-top: 2px; }
+  .char-count.over { color: var(--wrong); font-weight: bold; }
+  .reveal-btn, .self-btn {
+    margin-top: 6px; background: #f3e6ea; color: var(--main-dark); border: 1px solid var(--main);
+    border-radius: 6px; padding: 5px 10px; font-size: 0.8rem; cursor: pointer; margin-right: 6px;
+  }
+  .self-btn.active-ok { background: var(--correct); color: white; border-color: var(--correct); }
+  .self-btn.active-ng { background: var(--wrong); color: white; border-color: var(--wrong); }
+  .sample-box {
+    display: none; margin-top: 8px; background: #eafaf0; border-left: 4px solid var(--correct);
+    padding: 8px 10px; font-size: 0.88rem; border-radius: 4px;
+  }
+  .result-box { display: none; margin-top: 8px; padding: 8px 10px; border-radius: 6px; font-size: 0.88rem; }
+  .result-correct { background: #eafaf0; border-left: 4px solid var(--correct); color: #185c30; }
+  .result-wrong { background: #fdecea; border-left: 4px solid var(--wrong); color: #8c2a22; }
+  .grade-bar {
+    position: sticky; bottom: 0; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    padding: 12px 16px; text-align: center; z-index: 10; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  }
+  .grade-btn {
+    background: var(--main); color: white; border: none; border-radius: 24px;
+    padding: 12px 28px; font-size: 1rem; font-weight: bold; cursor: pointer;
+  }
+  .save-btn {
+    background: #1a7a3c; color: white; border: none; border-radius: 24px;
+    padding: 12px 28px; font-size: 1rem; font-weight: bold; cursor: pointer; display:none;
+  }
+  .grade-btn:active, .save-btn:active { transform: scale(0.97); }
+  #scoreSummary {
+    max-width: 780px; margin: 0 auto 16px; background: white; border-radius: 12px; padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: none;
+  }
+  #scoreSummary .headline { text-align:center; }
+  #scoreSummary .big { font-size: 2rem; font-weight: bold; color: var(--main-dark); }
+  #fieldTable { width:100%; border-collapse: collapse; margin-top: 14px; font-size: 0.85rem; }
+  #fieldTable th, #fieldTable td { border-bottom: 1px solid #eee; padding: 6px 4px; text-align: left; }
+  #fieldTable th { color: #888; font-weight: normal; }
+  .weak-tag { display:inline-block; background:#fdecea; color:var(--wrong); border-radius:4px; padding:2px 7px; margin:2px 4px 2px 0; font-size:0.78rem; }
+  .guide-box {
+    background: #eef3f8; border-left: 4px solid #1f4e7a; color: #234;
+    border-radius: 6px; padding: 10px 12px; margin: 8px 0; font-size: 0.85rem;
+    white-space: pre-wrap; line-height: 1.6;
+  }
+  .section-lead.warn {
+    background: #fff4d6; border-color: #e6c56b; color: #7a5a00;
+  }
+  .footer-note { text-align: center; font-size: 0.75rem; color: #999; padding: 20px 16px 40px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>国語　オリジナル問題　第3回</h1>
+  <p>漢字の書き・作文 特化セット（8/20の結果分析にもとづく）</p>
+</header>
+
+<div style="max-width:760px;margin:12px auto 4px;padding:0 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+  <a href="index.html" style="background:#f5eef1;color:var(--main-dark);border:1px solid var(--main);border-radius:20px;padding:6px 14px;font-size:0.8rem;text-decoration:none;font-weight:bold;">🏠 トップへ</a>
+  <a href="国語_オリジナル問題_練習用.html" style="background:#f5eef1;color:var(--main-dark);border:1px solid var(--main);border-radius:20px;padding:6px 14px;font-size:0.8rem;text-decoration:none;font-weight:bold;">国語 第1回</a>
+  <a href="国語_オリジナル問題_練習用_第2回.html" style="background:#f5eef1;color:var(--main-dark);border:1px solid var(--main);border-radius:20px;padding:6px 14px;font-size:0.8rem;text-decoration:none;font-weight:bold;">国語 第2回</a>
+  <a href="国語_オリジナル問題_練習用_第3回.html" style="background:var(--main);color:white;border:1px solid var(--main);border-radius:20px;padding:6px 14px;font-size:0.8rem;text-decoration:none;font-weight:bold;">国語 第3回</a>
+  <a href="国語_V模擬対策/V模擬国語_オリジナル問題_練習用.html" style="background:#f5eef1;color:var(--main-dark);border:1px solid var(--main);border-radius:20px;padding:6px 14px;font-size:0.8rem;text-decoration:none;font-weight:bold;">V模擬対策</a>
+</div>
+
+<div class="timer-bar">
+  <span>目安時間 50分　経過：<span id="timerDisplay">00:00</span></span>
+  <div>
+    <button onclick="startTimer()">開始</button>
+    <button onclick="resetTimer()">リセット</button>
+  </div>
+</div>
+
+<div class="name-bar">
+  名前：<input type="text" id="studentName" placeholder="（任意）記録用の名前">
+</div>
+
+<div class="wrap" id="quizRoot"></div>
+
+<div id="scoreSummary">
+  <div class="headline">
+    <div>選択式・漢字の正答数（作文は自己採点）</div>
+    <div class="big"><span id="scoreNum">0</span> / <span id="scoreTotal">0</span></div>
+    <div style="font-size:0.85rem;color:#666;margin-top:6px;">作文（200字）は解答例と見比べて、「できた／もう一息」ボタンで自己評価してください。</div>
+  </div>
+  <table id="fieldTable"><thead><tr><th>分野</th><th>正答</th><th>問題数</th><th>正答率</th></tr></thead><tbody></tbody></table>
+  <div id="weakList" style="margin-top:10px;"></div>
+</div>
+
+<div class="grade-bar">
+  <button class="grade-btn" onclick="gradeAll()">採点する</button>
+  <button class="save-btn" id="saveBtn" onclick="saveResults()">結果を保存する</button>
+</div>
+
+<div class="footer-note">漢字の読みは満点になったので、今回は「書き」と「作文」に絞って強化しています。大問七は3ステップで作文を組み立てる練習です。保存した結果ファイルをClaudeに見せると、次回もその結果に合わせて作れます。</div>
+
+<script>
+const SECTIONS = [{"id": "q1", "title": "大問一　次の各文の下線を付けた漢字の読みがなを書け。", "lead": null, "items": [{"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 1, "q": "けがの{治療}に専念する。", "answer": "ちりょう", "explain": "「治療」は病気やけがを治すこと。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 2, "q": "新しい役職に{就任}する。", "answer": "しゅうにん", "explain": "「就任」は任務・職務につくこと。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 3, "q": "彼の努力は{称賛}に値する。", "answer": "しょうさん", "explain": "「称賛」はほめたたえること。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 4, "q": "実験の結果を{検証}する。", "answer": "けんしょう", "explain": "「検証」は実際に調べて確かめること。"}, {"kind": "fill", "field": "漢字の読み", "topic": "漢字_読み", "no": 5, "q": "厳しい寒さが{緩和}される。", "answer": "かんわ", "explain": "「緩和」はきびしさや厳しい状態をやわらげること。"}]}, {"id": "q2", "title": "大問二　次の各文の下線を付けたカタカナの部分に当たる漢字を、楷書で丁寧に書け。", "lead": "＊第1回で2回とも空欄だった「要」「導入」「経緯」を(6)〜(8)に再出題しています。書けなくても、まず思いついた字を書いてみることが大切です。", "items": [{"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 1, "q": "問題の解決に{ツト}める。", "answer": "努", "explain": "「努める」は力を尽くすこと。「勤める（勤務する）」「務める（役割を果たす）」と区別する。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 2, "q": "規則を{キビ}しく守る。", "answer": "厳", "explain": "送り仮名は「厳しく」。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 3, "q": "意見を{ソンチョウ}する。", "answer": "尊重", "explain": "「尊重」は価値あるものとして大切に扱うこと。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 4, "q": "実力を{ハッキ}する。", "answer": "発揮", "explain": "「発揮」は能力を十分に表し出すこと。「揮」の字形に注意。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 5, "q": "作業の{コウリツ}を上げる。", "answer": "効率", "explain": "「効率」は使った力に対して得られる成果の割合。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 6, "q": "彼はチームの{カナメ}として活躍した。", "answer": "要", "explain": "【再挑戦】「かなめ」は扇の骨をまとめてとめる部品のこと。そこから「いちばん大切な部分」の意味になった。「要point（ようてん）」の「要」と同じ字。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 7, "q": "新しい制度を{ドウニュウ}する。", "answer": "導入", "explain": "【再挑戦】「導（みちび）き入れる」と訓読みで分解すると書きやすい。「指導」「導線」の「導」。"}, {"kind": "fill", "field": "漢字の書き", "topic": "漢字_書き", "no": 8, "q": "事件の{ケイイ}を詳しく説明する。", "answer": "経緯", "explain": "【再挑戦】「経」は縦糸、「緯」は横糸。織物の糸が絡み合う様子から「込み入った事情」の意味。「経験」の「経」＋「緯度」の「緯」。"}]}, {"id": "q3", "title": "大問三　次の文章を読んで、あとの各問に答えよ。", "lead": "中学三年生の湊は、吹奏楽部でトランペットを担当している。コンクールのソロパートを任されたが、本番を三日後に控えても、自分の音がどこか硬く聞こえて仕方がなかった。\n　「もっと丁寧に、正確に」\n　そう思うほど、指先に力が入り、音は縮こまっていった。\n　放課後の音楽室で一人吹いていると、卒業した先輩の千夏が顔を出した。今は大学で音楽を続けている。\n　「湊、なんか窮屈そうな音してるね」\n　図星を指されて、湊は楽器から口を離した。\n　「ミスしないように吹こうとしてるんです。ソロだから、失敗したら全部台無しになるし」\n　千夏はしばらく黙ってから、ゆっくりと言った。\n　「私も現役のとき同じだった。でもね、聴いてる人が受け取ってるのは、正確さじゃなくて、その人がその曲をどう感じてるかなんだよ」\n　湊は、自分がずっと「間違えないこと」を目標にしていて、この曲のどこが好きなのかを一度も考えていなかったことに気づいた。初めてこの曲を聴いたとき、胸が高鳴ったあの感覚を、いつのまにか置き去りにしていた。\n　もう一度楽器を構える。今度は正確さのことは忘れて、初めて聴いたときに感じた高揚を音に乗せるつもりで吹いた。\n　音楽室に響いた音は、さっきまでとは違って、どこまでも伸びやかだった。窓の外の夕日が、譜面台をあたたかく照らしていた。", "items": [{"kind": "choice", "field": "小説文", "topic": "小説_心情把握", "no": 1, "q": "傍線部「そう思うほど、指先に力が入り、音は縮こまっていった」とあるが、この表現から読み取れる湊の様子として最も適切なのは、次のうちではどれか。", "choices": ["練習を重ねるうちに、着実に上達している様子。", "正確さを求めるあまり緊張が強まり、かえって表現が硬くなっている様子。", "体調が悪く、思うように演奏できない様子。", "ソロパートに飽きて、意欲を失っている様子。"], "answer": 1, "explain": "「丁寧に、正確に」と思うほど力が入り音が縮こまる、という因果関係から、正確さへのこだわりが緊張と硬さを生んでいることが読み取れる。"}, {"kind": "choice", "field": "小説文", "topic": "小説_人物描写理解", "no": 2, "q": "傍線部「図星を指されて、湊は楽器から口を離した」とあるが、この時の湊の心情として最も適切なのは、次のうちではどれか。", "choices": ["千夏の指摘が的外れで、腹を立てている。", "自分でも感じていた問題点を言い当てられ、動揺している。", "千夏に会えたことが嬉しく、演奏をやめて話したくなっている。", "疲れを感じて、休憩したいと思っている。"], "answer": 1, "explain": "「窮屈そうな音」という指摘は、冒頭で湊自身が感じていた「音が硬い」という悩みと一致する。「図星」はまさにその通りという意味。"}, {"kind": "choice", "field": "小説文", "topic": "小説_心情変化", "no": 3, "q": "傍線部「この曲のどこが好きなのかを一度も考えていなかったことに気づいた」とあるが、この気づきの内容として最も適切なのは、次のうちではどれか。", "choices": ["自分にはこの曲を演奏する実力がないということ。", "ミスを避けることに気を取られ、曲への自分の思いを見失っていたということ。", "先輩の千夏の方が自分より上手だということ。", "ソロパートを他の人に譲るべきだということ。"], "answer": 1, "explain": "直後に「初めて聴いたときに胸が高鳴ったあの感覚を、置き去りにしていた」とあり、正確さの追求が曲への思いを覆い隠していたことへの気づきである。"}, {"kind": "choice", "field": "小説文", "topic": "小説_情景描写の効果", "no": 4, "q": "結末の「窓の外の夕日が、譜面台をあたたかく照らしていた」という情景描写の効果として最も適切なのは、次のうちではどれか。", "choices": ["時間が遅くなり、練習を切り上げる必要があることを示している。", "湊の心境が晴れやかに変化したことを、あたたかな光景に重ねて印象づけている。", "本番までの時間がないという焦りを強調している。", "千夏が帰ってしまった寂しさを表している。"], "answer": 1, "explain": "「伸びやかな音」に続けて夕日の「あたたかさ」を描くことで、湊の心が解きほぐれた状態を情景に託して表現している。"}, {"kind": "choice", "field": "小説文", "topic": "小説_表現技法", "no": 5, "q": "この文章の表現の特徴について述べたものとして最も適切なのは、次のうちではどれか。", "choices": ["湊と千夏の視点を交互に描き、二人の考えの違いを対比している。", "「縮こまった音」と「伸びやかな音」という音の描写の対比によって、湊の心情の変化を表している。", "会話文を用いず、地の文のみで心情を説明している。", "過去の回想を中心に構成し、現在の場面はほとんど描かれていない。"], "answer": 1, "explain": "冒頭の「縮こまっていった」音と結末の「どこまでも伸びやかだった」音が対応しており、音の変化が心情の変化を象徴している。"}]}, {"id": "q4", "title": "大問四　次の文章を読んで、あとの各問に答えよ。", "lead": "人は誰でも失敗を避けたいと思う。失敗すれば恥ずかしい思いをするし、周囲からの評価も下がるかもしれない。だから私たちは、できるだけ確実な道を選ぼうとする。\n　しかし、失敗を避け続けることには、ある落とし穴がある。それは、確実にできることしかやらなくなる、という点だ。確実にできることとは、すでに自分の能力の範囲内にあることである。その範囲の中だけで行動している限り、能力の範囲そのものは広がらない。\n　技能の習得を研究する分野では、人が最も成長するのは、簡単すぎず難しすぎない、ちょうど少し背伸びが必要な課題に取り組んでいるときだと言われている。そしてその領域では、当然ながら失敗が起こる。つまり、成長と失敗は切り離せない関係にあるのだ。\n　もちろん、これは失敗そのものに価値があるという意味ではない。同じ失敗を何度も繰り返すだけなら、そこから得られるものは少ない。重要なのは、失敗した後に「なぜうまくいかなかったのか」を振り返り、次の試みに反映させることである。振り返りを伴わない失敗は、ただの消耗にすぎない。\n　私たちに必要なのは、失敗を恐れない無謀さではなく、失敗を織り込んだうえで挑戦を設計する冷静さである。失敗する可能性を最初から計算に入れておけば、実際に失敗したときにも過度に落ち込まず、次の一手を考えることができる。\n　失敗は避けるべき事故ではなく、成長の過程に組み込まれた通過点である。そう捉え直したとき、私たちはようやく自分の能力の範囲を押し広げていくことができる。", "items": [{"kind": "choice", "field": "論説文", "topic": "論説文_内容理解", "no": 1, "q": "傍線部「失敗を避け続けることには、ある落とし穴がある」とあるが、筆者が述べる「落とし穴」の内容として最も適切なのは、次のうちではどれか。", "choices": ["周囲からの評価が下がってしまうこと。", "確実にできることしかやらなくなり、能力の範囲が広がらなくなること。", "他人の失敗を許せなくなること。", "挑戦する機会が周囲から与えられなくなること。"], "answer": 1, "explain": "第2段落に「確実にできることしかやらなくなる」「能力の範囲そのものは広がらない」と明示されている。"}, {"kind": "choice", "field": "論説文", "topic": "論説文_具体例の解釈", "no": 2, "q": "傍線部「ちょうど少し背伸びが必要な課題」とあるが、この課題の説明として最も適切なのは、次のうちではどれか。", "choices": ["誰にとっても難しく、達成がほぼ不可能な課題。", "現在の能力ではやや届かないが、努力すれば手が届く程度の課題。", "すでに何度も達成したことのある、確実にできる課題。", "本人の興味とは無関係に与えられた課題。"], "answer": 1, "explain": "「簡単すぎず難しすぎない」という説明から、現在の能力を少し超える程度の課題を指すことが分かる。"}, {"kind": "choice", "field": "論説文", "topic": "論説文_筆者の主張理解", "no": 3, "q": "筆者が「重要なのは」として述べていることは、次のうちではどれか。", "choices": ["失敗を恐れず、とにかく数多く挑戦すること。", "失敗した後に原因を振り返り、次の試みに反映させること。", "失敗しないよう、事前に十分な準備をすること。", "失敗を他人に知られないようにすること。"], "answer": 1, "explain": "第4段落で「失敗した後に『なぜうまくいかなかったのか』を振り返り、次の試みに反映させること」が重要だと述べられている。"}, {"kind": "choice", "field": "論説文", "topic": "論説文_論理構成", "no": 4, "q": "第4段落が本文全体の中で果たしている役割として最も適切なのは、次のうちではどれか。", "choices": ["それまでの主張を全面的に否定し、話題を転換している。", "「失敗に価値がある」と受け取られないよう条件をつけ、主張を正確なものにしている。", "第1段落の内容を言い換えて繰り返している。", "本文と関係のない新しい話題を導入している。"], "answer": 1, "explain": "「もちろん、これは失敗そのものに価値があるという意味ではない」と留保を加え、振り返りの必要性という条件を示すことで主張を精密にしている。"}, {"kind": "write", "field": "論説文", "topic": "作文_意見文", "no": 5, "q": "国語の授業でこの文章を読んだ後、「失敗から学ぶこと」というテーマで自分の意見を発表することになった。このときにあなたが話す言葉を、具体的な体験や見聞も含めて二百字以内で書け。なお、書き出しや改行の際の空欄、句読点や「」も一字と数えよ。", "sample": "私は昨年の合唱コンクールで、初めて伴奏に挑戦した。練習では何度もミスをし、本番でも一か所つまずいてしまった。悔しかったが、どこで指が止まったのかを楽譜に印をつけて確認すると、いつも同じ和音でつまずいていたことが分かった。原因が見えたことで、次の演奏会では同じ失敗をせずに弾き切ることができた。失敗そのものが自分を成長させたのではなく、失敗を振り返って原因を突き止めたことが力になったのだと思う。", "charLimit": 200, "guide": "【二百字作文の型（この順番で書くと組み立てやすい）】\n(1) 結論を先に書く（約30字）　例：「私は〜だと考える。」\n(2) 具体的な体験を一つだけ、くわしく書く（約90字）　いつ・どこで・何をしたかを入れる。体験は一つに絞る方が深く書ける。\n(3) その体験から気づいたことを書く（約50字）　例：「このとき私は〜に気づいた。」\n(4) テーマに結びつけてまとめる（約30字）　例：「だから私は〜だと思う。」\n\n【前回のあなたの答案へのアドバイス】\n・体験が二つ（体育祭・友達の話）入っていたため、それぞれが浅くなっていました。一つに絞ってくわしく書きましょう。\n・改行を三回していましたが、改行の空欄も一字に数えられます。二百字作文では改行せず一段落で書くのが得点しやすいです。\n・「対話することで〜」という表現が二回出ていました。同じ言い回しの重複は減点対象になりやすいので、言い換えましょう。"}]}, {"id": "q5", "title": "大問五　次のＡは「徒然草」の一段とその現代語訳であり、Ｂはその内容について話し合う先生と生徒の対話である。これらの文章を読んで、あとの各問に答えよ。", "lead": "〔本文〕\n　ある人、弓射ることを習ふに、諸矢をたばさみて的に向かふ。師の言はく、「初心の人、二つの矢を持つことなかれ。後の矢を頼みて、初めの矢に等閑の心あり。毎度ただ得失なく、この一矢に定むべしと思へ」と言ふ。\n　わづかに二つの矢、師の前にて一つをおろかにせんと思はんや。懈怠の心、みづから知らずといへども、師これを知る。この戒め、万事にわたるべし。\n（「徒然草」第九十二段による）\n\n〔現代語訳〕\n　ある人が、弓を射ることを習うときに、二本の矢を手にはさんで的に向かった。師匠が言うことには、「初心者は、二本の矢を持ってはならない。二本目の矢をあてにして、一本目の矢をいいかげんに射る心が生まれる。毎回ただ当たり外れを考えず、この一本の矢で決めるのだと思いなさい」と言う。\n　たった二本の矢を、師匠の前で一本をいいかげんにしようと思うだろうか（いや、思わない）。だが、なまける心は、自分では気づかなくても、師匠にはそれが分かるのだ。この戒めは、あらゆることに通じるはずである。\n\n〔対談〕\n先生：「徒然草」の中でもよく知られた一段ですね。師匠は、なぜ二本目の矢を持つことを禁じたのでしょうか。\n生徒：二本目があると安心してしまって、一本目に集中できなくなるからだと思います。\n先生：そうですね。ここで注目したいのは、本人の自覚についてどう書かれているかです。\n生徒：「懈怠の心、みづから知らずといへども、師これを知る」とあるので、本人はなまけているつもりがなくても、師匠には見抜かれてしまうということだと思います。\n先生：よく読めています。つまり作者は、無自覚な油断こそが恐ろしいと言っているのですね。そして最後の一文で、この話をどう広げていますか。\n生徒：「この戒め、万事にわたるべし」とあるので、弓の話だけでなく、すべてのことに当てはまると言っています。\n先生：その通りです。具体的な一つの場面から、生き方全般に通じる教訓を引き出す。これが「徒然草」の特徴的な書き方です。", "items": [{"kind": "choice", "field": "古典融合文", "topic": "古典_現代仮名遣い", "no": 1, "q": "本文中の「言はく」を現代仮名遣いに直したものとして正しいのは、次のうちではどれか。", "choices": ["いわく", "いはく", "ゆわく", "いわぐ"], "answer": 0, "explain": "歴史的仮名遣いの語中・語尾の「は」は現代仮名遣いでは「わ」となるため、「言はく」は「いわく」となる。"}, {"kind": "choice", "field": "古典融合文", "topic": "古典_内容理解", "no": 2, "q": "師匠が「二つの矢を持つことなかれ」と言った理由として最も適切なのは、次のうちではどれか。", "choices": ["二本持つと的に当たりにくくなるから。", "二本目をあてにして、一本目をいいかげんに射る心が生まれるから。", "矢が不足していて、節約する必要があったから。", "初心者には二本の矢を扱う体力がないから。"], "answer": 1, "explain": "「後の矢を頼みて、初めの矢に等閑の心あり」（二本目をあてにして一本目に手を抜く心が生じる）が理由である。"}, {"kind": "choice", "field": "古典融合文", "topic": "古典_語句の意味", "no": 3, "q": "「懈怠の心、みづから知らずといへども、師これを知る」の内容として最も適切なのは、次のうちではどれか。", "choices": ["なまける心は、本人が自覚していなくても師匠には見抜かれてしまう。", "なまける心は、師匠にも本人にも分からない。", "なまける心を持つのは師匠の方である。", "本人が自覚すれば、師匠に知られることはない。"], "answer": 0, "explain": "「みづから知らずといへども（自分では気づかなくても）」「師これを知る（師匠には分かる）」という対比の構造になっている。"}, {"kind": "choice", "field": "古典融合文", "topic": "対談_役割理解", "no": 4, "q": "Ｂの対談における先生の発言の役割として最も適切なのは、次のうちではどれか。", "choices": ["生徒の答えを否定し、自分の解釈のみを述べている。", "生徒の読みを認めながら、注目すべき箇所を示して読みを深めさせている。", "生徒に代わってすべての問いに自ら答えている。", "本文とは関係のない話題に切り替えている。"], "answer": 1, "explain": "先生は「そうですね」「よく読めています」と認めた上で、「本人の自覚についてどう書かれているか」など注目箇所を示し、読みを深めさせている。"}, {"kind": "choice", "field": "古典融合文", "topic": "対談_主旨理解", "no": 5, "q": "この対談を通して先生が伝えようとしている「徒然草」の書き方の特徴として最も適切なのは、次のうちではどれか。", "choices": ["弓の技術を専門的に解説することを目的としている。", "具体的な一つの場面から、生き方全般に通じる教訓を引き出している。", "師匠と弟子の対立を物語として描くことを目的としている。", "教訓を述べず、出来事だけを客観的に記録している。"], "answer": 1, "explain": "最後の先生の発言「具体的な一つの場面から、生き方全般に通じる教訓を引き出す。これが『徒然草』の特徴的な書き方です」に対応する。"}]}, {"id": "q6", "title": "大問六（弱点強化ドリル）　漢字の書き 24問", "lead": "＊第1回では漢字の書きが2回とも2/5でした。読みは満点になったので、このドリルはすべて書き取りです。分からなくても空欄にせず、思いついた字を必ず書いてみましょう。", "items": [{"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 1, "q": "目標を{タッセイ}する。", "answer": "達成", "explain": "「達成」は成し遂げること。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 2, "q": "公園を{セイソウ}する。", "answer": "清掃", "explain": "「清掃」はきれいに掃除すること。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 3, "q": "友人に{ソウダン}する。", "answer": "相談", "explain": "「相談」は話し合って意見を求めること。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 4, "q": "係を{タントウ}する。", "answer": "担当", "explain": "「担当」は仕事を受け持つこと。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 5, "q": "体力を{イジ}する。", "answer": "維持", "explain": "「維持」は状態を保ち続けること。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 6, "q": "作品を{テンジ}する。", "answer": "展示", "explain": "「展示」は並べて見せること。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 7, "q": "意見が{イッチ}する。", "answer": "一致", "explain": "「一致」はぴったり合うこと。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 8, "q": "技術が{シンポ}する。", "answer": "進歩", "explain": "「進歩」は物事がよい方向に進むこと。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 9, "q": "問題を{シテキ}する。", "answer": "指摘", "explain": "「指摘」は具体的に取り上げて示すこと。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 10, "q": "予定を{ヘンコウ}する。", "answer": "変更", "explain": "「変更」は変えて改めること。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 11, "q": "参加を{ヨびかける}。", "answer": "呼びかける", "explain": "送り仮名は「呼びかける」。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 12, "q": "荷物を{アズける}。", "answer": "預ける", "explain": "送り仮名は「預ける」。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 13, "q": "辞書で意味を{シラべる}。", "answer": "調べる", "explain": "送り仮名は「調べる」。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 14, "q": "部屋を{アタタめる}。", "answer": "暖める", "explain": "空気や部屋には「暖」、食べ物や心には「温」を使う。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 15, "q": "約束の時間を{アヤマる}。", "answer": "誤る", "explain": "「誤る」は間違えること。謝罪の「謝る」と区別する。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 16, "q": "彼はチームの{カナメ}だ。", "answer": "要", "explain": "【最重要・3回目】扇の骨をとめる部品が語源。「要点」「重要」の「要」と同じ字。今度こそ書けるようにしよう。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 17, "q": "新システムを{ドウニュウ}する。", "answer": "導入", "explain": "【最重要・3回目】「導き入れる」と訓読みで分解。「指導」の「導」＋「入」。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 18, "q": "これまでの{ケイイ}を報告する。", "answer": "経緯", "explain": "【最重要・3回目】「経験」の「経」＋「緯度」の「緯」。縦糸と横糸が語源。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 19, "q": "計画の{ガイヨウ}を説明する。", "answer": "概要", "explain": "「概要」はあらまし。「要」の字がここでも使われている。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 20, "q": "必{ヨウ}な道具をそろえる。", "answer": "要", "explain": "「必要」の「要」。(16)と同じ字が熟語の中で使われている例。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 21, "q": "先生の{シドウ}を受ける。", "answer": "指導", "explain": "「指導」の「導」は(17)の「導入」と同じ字。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 22, "q": "貴重な{ケイケン}を積む。", "answer": "経験", "explain": "「経験」の「経」は(18)の「経緯」と同じ字。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 23, "q": "責任を{オう}。", "answer": "負う", "explain": "送り仮名は「負う」。"}, {"kind": "fill", "field": "漢字書きドリル", "topic": "漢字_書き", "no": 24, "q": "目標を{カカげる}。", "answer": "掲げる", "explain": "送り仮名は「掲げる」。"}]}, {"id": "q7", "title": "大問七（弱点強化）　作文トレーニング", "lead": "＊作文を「もう一息」と自己評価していたので、いきなり二百字を書くのではなく、三段階に分けて練習します。(1)で骨組みを作り、(2)で体験だけを書き、(3)で通して仕上げる流れです。", "items": [{"kind": "write", "field": "作文トレーニング", "topic": "作文_構成メモ", "no": 1, "q": "【ステップ1・構成メモ】「協力すること」というテーマで、次の四つの要素を短い一文ずつでメモせよ。文章にしなくてよい。　結論／体験／気づき／まとめ", "sample": "結論：私は、人と協力するためには自分の考えをはっきり伝えることが必要だと考える。／体験：合唱コンクールの練習で意見が食い違ったとき、思い切って自分の考えを口に出した。／気づき：黙っているより、伝えた方が相手も本音を返してくれると分かった。／まとめ：だから私は、協力の第一歩は自分の考えを伝えることだと思う。", "charLimit": 200, "guide": "いきなり書き始めず、まずこの四つを箇条書きにするのが二百字作文のコツです。ここで体験を一つに絞っておくと、本番で迷わなくなります。"}, {"kind": "write", "field": "作文トレーニング", "topic": "作文_体験描写", "no": 2, "q": "【ステップ2・体験を書く】ステップ1でメモした体験の部分だけを、いつ・どこで・何をしたかが分かるように八十字〜百字程度で書け。", "sample": "昨年の合唱コンクールの練習で、パートごとの音量について意見が分かれた。私はためらいながらも「もう少しソプラノを抑えた方がいい」と伝えた。すると他の人も次々に意見を出し始め、話し合いでバランスが整っていった。", "charLimit": 120, "guide": "体験は具体的であるほど説得力が出ます。「頑張った」「楽しかった」などの感想語ではなく、実際にした行動や言ったことを書きましょう。"}, {"kind": "write", "field": "作文トレーニング", "topic": "作文_意見文", "no": 3, "q": "【ステップ3・本番】ステップ1と2をつなげて、「協力すること」というテーマで二百字以内の意見文を完成させよ。書き出しや改行の際の空欄、句読点や「」も一字と数える。改行はせず、一段落で書くこと。", "sample": "私は、協力するには自分の考えをはっきり伝えることが必要だと考える。昨年の合唱コンクールの練習で、パートごとの音量について意見が分かれた。私はためらいながらも「もう少しソプラノを抑えた方がいい」と伝えた。すると他の人も次々に意見を出し始め、話し合いでバランスが整っていった。このとき私は、黙っていては相手も本音を出せないのだと気づいた。だから協力の第一歩は、自分の考えを言葉にすることだと思う。", "charLimit": 200, "guide": "結論(約30字)、体験(約90字)、気づき(約50字)、まとめ(約30字)の配分を意識しましょう。同じ言い回しを二度使わないことも大切です。"}]}];
+const MARUS = ["ア","イ","ウ","エ"];
+const root = document.getElementById('quizRoot');
+
+function renderLead(lead) {
+  if (!lead) return '';
+  const escaped = lead.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                       .replace(/先生：/g,'<b>先生：</b>').replace(/生徒：/g,'<b>生徒：</b>');
+  const cls = lead.trim().startsWith('＊') ? 'section-lead warn' : 'section-lead';
+  return `<div class="${cls}">${escaped}</div>`;
+}
+
+function renderFillItem(sec, item) {
+  const uid = `${sec.id}-${item.no}`;
+  const html = item.q.replace('{','<u>').replace('}','</u>');
+  return `<div class="item" data-kind="fill" data-field="${item.field||''}" data-topic="${item.topic||''}" data-answer="${item.answer}" id="item-${uid}">
+    <div class="qtext"><span class="qtag">${item.field||''}</span>(${item.no})　${html}
+      <input type="text" class="fill-input" id="fill-${uid}" placeholder="答え"></div>
+    <div class="result-box" id="result-${uid}"></div>
+  </div>`;
+}
+
+function renderChoiceItem(sec, item) {
+  let html = `<div class="item" data-kind="choice" data-field="${item.field||''}" data-topic="${item.topic||''}" data-answer="${item.answer}" id="item-${sec.id}-${item.no}">`;
+  html += `<div class="qtext"><span class="qtag">${item.field||''}</span>〔問${item.no}〕 ${item.q}</div>`;
+  item.choices.forEach((c, i) => {
+    html += `<label class="choice-label">
+      <input type="radio" name="ans-${sec.id}-${item.no}" value="${i}">
+      <span><span class="choice-mark">${MARUS[i]}</span>${c}</span>
+    </label>`;
+  });
+  html += `<div class="result-box" id="result-${sec.id}-${item.no}"></div>`;
+  html += `</div>`;
+  return html;
+}
+
+function renderWriteItem(sec, item) {
+  const uid = `${sec.id}-${item.no}`;
+  const limit = item.charLimit || null;
+  let html = `<div class="item" data-kind="write" data-field="${item.field||''}" data-topic="${item.topic||''}" id="item-${uid}">`;
+  html += `<div class="qtext"><span class="qtag">${item.field||''}</span>〔問${item.no}〕 ${item.q}</div>`;
+  if (item.guide) {
+    html += `<div class="guide-box">${item.guide.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+  }
+  html += `<textarea id="write-${uid}" placeholder="ここに書いてみよう" oninput="updateCharCount('${uid}', ${limit})"></textarea>`;
+  if (limit) html += `<div class="char-count" id="cc-${uid}">0 / ${limit}字</div>`;
+  html += `<div><button class="reveal-btn" onclick="toggleSample('${uid}')">解答例を見る</button>
+    <button class="self-btn" id="ok-${uid}" onclick="setSelf('${uid}','ok')">できた</button>
+    <button class="self-btn" id="ng-${uid}" onclick="setSelf('${uid}','ng')">もう一息</button></div>`;
+  html += `<div class="sample-box" id="sample-${uid}">【解答例】${item.sample}</div>`;
+  html += `</div>`;
+  return html;
+}
+
+function updateCharCount(uid, limit) {
+  const ta = document.getElementById(`write-${uid}`);
+  const cc = document.getElementById(`cc-${uid}`);
+  if (!cc) return;
+  const n = ta.value.length;
+  cc.textContent = `${n} / ${limit}字`;
+  cc.classList.toggle('over', n > limit);
+}
+
+function toggleSample(uid) {
+  const box = document.getElementById(`sample-${uid}`);
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+const selfRatings = {};
+function setSelf(uid, rating) {
+  selfRatings[uid] = rating;
+  const ok = document.getElementById(`ok-${uid}`);
+  const ng = document.getElementById(`ng-${uid}`);
+  ok.classList.toggle('active-ok', rating === 'ok');
+  ng.classList.toggle('active-ng', rating === 'ng');
+}
+
+SECTIONS.forEach(sec => {
+  let html = `<div class="section-card"><div class="section-title">${sec.title}</div>`;
+  html += renderLead(sec.lead);
+  sec.items.forEach(item => {
+    if (item.kind === 'fill') html += renderFillItem(sec, item);
+    else if (item.kind === 'choice') html += renderChoiceItem(sec, item);
+    else html += renderWriteItem(sec, item);
+  });
+  html += `</div>`;
+  root.insertAdjacentHTML('beforeend', html);
+});
+
+let lastResult = null;
+
+function gradeAll() {
+  let correct = 0, total = 0;
+  const byField = {};
+  const weakTopics = [];
+  const detail = [];
+
+  SECTIONS.forEach(sec => {
+    sec.items.forEach(item => {
+      const uid = `${sec.id}-${item.no}`;
+      const field = item.field || '未分類';
+      if (!byField[field]) byField[field] = {correct:0, total:0};
+
+      if (item.kind === 'fill') {
+        total++;
+        byField[field].total++;
+        const input = document.getElementById(`fill-${uid}`);
+        const yourAns = input ? input.value.trim() : '';
+        const isCorrect = yourAns === item.answer;
+        const box = document.getElementById(`result-${uid}`);
+        box.style.display = 'block';
+        if (isCorrect) {
+          correct++; byField[field].correct++;
+          box.className = 'result-box result-correct';
+          box.textContent = `正解！ 【解説】${item.explain}`;
+        } else {
+          box.className = 'result-box result-wrong';
+          box.textContent = `不正解（あなたの回答：${yourAns || '(未回答)'} / 正解：${item.answer}） 【解説】${item.explain}`;
+          weakTopics.push(item.topic || field);
+        }
+        detail.push({section: sec.id, no: item.no, kind:'fill', field, topic:item.topic,
+                      chosen: yourAns || null, correctAnswer: item.answer, isCorrect: !!isCorrect});
+      } else if (item.kind === 'choice') {
+        total++;
+        byField[field].total++;
+        const sel = document.querySelector(`input[name="ans-${uid}"]:checked`);
+        const box = document.getElementById(`result-${uid}`);
+        box.style.display = 'block';
+        const isCorrect = sel && parseInt(sel.value) === item.answer;
+        if (isCorrect) {
+          correct++; byField[field].correct++;
+          box.className = 'result-box result-correct';
+          box.textContent = `正解！ 【解説】${item.explain}`;
+        } else {
+          box.className = 'result-box result-wrong';
+          const chosen = sel ? MARUS[parseInt(sel.value)] : '未回答';
+          box.textContent = `不正解（あなたの回答：${chosen} / 正解：${MARUS[item.answer]}） 【解説】${item.explain}`;
+          weakTopics.push(item.topic || field);
+        }
+        detail.push({section: sec.id, no: item.no, kind:'choice', field, topic: item.topic,
+                      chosen: sel ? MARUS[parseInt(sel.value)] : null, correctAnswer: MARUS[item.answer], isCorrect: !!isCorrect});
+      } else {
+        const rating = selfRatings[uid] || null;
+        if (rating === 'ng') weakTopics.push(item.topic || field);
+        detail.push({section: sec.id, no: item.no, kind: 'write', field, topic: item.topic,
+                      answerText: (document.getElementById(`write-${uid}`)||{}).value || '',
+                      charCount: ((document.getElementById(`write-${uid}`)||{}).value || '').length,
+                      selfRating: rating});
+      }
+    });
+  });
+
+  document.getElementById('scoreNum').textContent = correct;
+  document.getElementById('scoreTotal').textContent = total;
+
+  const tbody = document.querySelector('#fieldTable tbody');
+  tbody.innerHTML = '';
+  Object.keys(byField).forEach(f => {
+    const d = byField[f];
+    const rate = d.total ? Math.round(d.correct/d.total*100) : 0;
+    tbody.insertAdjacentHTML('beforeend', `<tr><td>${f}</td><td>${d.correct}</td><td>${d.total}</td><td>${rate}%</td></tr>`);
+  });
+
+  const weakList = document.getElementById('weakList');
+  if (weakTopics.length) {
+    const uniq = [...new Set(weakTopics)];
+    weakList.innerHTML = '苦手そうな単元：' + uniq.map(t => `<span class="weak-tag">${t}</span>`).join('');
+  } else {
+    weakList.innerHTML = '';
+  }
+
+  document.getElementById('scoreSummary').style.display = 'block';
+  document.getElementById('scoreSummary').scrollIntoView({behavior:'smooth'});
+  document.getElementById('saveBtn').style.display = 'inline-block';
+
+  lastResult = {
+    examTitle: "国語オリジナル問題 第3回（漢字の書き・作文特化）",
+    studentName: document.getElementById('studentName').value || null,
+    date: new Date().toISOString(),
+    elapsedSeconds: elapsed,
+    choiceScore: {correct, total},
+    byField,
+    weakTopics: [...new Set(weakTopics)],
+    detail
+  };
+}
+
+async function saveResults() {
+  if (!lastResult) return;
+  const filename = `国語結果_第3回_${lastResult.date.slice(0,10)}_${String(new Date().getHours()).padStart(2,'0')}${String(new Date().getMinutes()).padStart(2,'0')}.json`;
+  const text = JSON.stringify(lastResult, null, 2);
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{description: 'JSON', accept: {'application/json': ['.json']}}]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      alert('保存しました。次回はこのファイルをClaudeに見せてください。');
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      // フォールバックへ
+    }
+  }
+  const blob = new Blob([text], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+let timerInterval = null;
+let elapsed = 0;
+function startTimer() {
+  if (timerInterval) return;
+  timerInterval = setInterval(() => {
+    elapsed++;
+    const m = String(Math.floor(elapsed/60)).padStart(2,'0');
+    const s = String(elapsed%60).padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  elapsed = 0;
+  document.getElementById('timerDisplay').textContent = '00:00';
+}
+</script>
+</body>
+</html>
